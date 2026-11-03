@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Show, Don't Tell: The ABSDT Camera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* One visual world: a dark film-editing desk; the five letters are the only colours. */
+  --bg:#14161d; --panel:#1d2029; --panel-2:#262a35; --ink:#eef0f5; --muted:#a3a8b8; --line:#343949;
+  --A:#ff9f43; --B:#ff5d6c; --S:#2ec4b6; --D:#ffd23f; --T:#a78bfa;
+  --good:#3ddc84; --bad:#ff5d6c;
+  --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,6vw,46px)}
+h2{font-size:28px}
+h3{font-size:20px}
+p{margin:0}
+.lead{color:var(--muted);max-width:62ch}
+section{display:flex;flex-direction:column;gap:16px}
+.step{font-family:var(--display);color:var(--muted);font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:620px){.compare{grid-template-columns:1fr}}
+.tell{border-left:5px solid var(--muted)}
+.show{border-left:5px solid var(--S)}
+.tag{display:inline-block;font-family:var(--display);font-size:14px;color:var(--muted);margin-bottom:6px}
+.letters{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media (max-width:700px){.letters{grid-template-columns:1fr 1fr}}
+.lcard{background:var(--panel);border-radius:14px;padding:14px;border-top:6px solid var(--c);display:flex;flex-direction:column;gap:4px}
+.lcard b{font-family:var(--display);font-size:38px;color:var(--c);line-height:1}
+.lcard .nm{font-weight:800}
+.lcard .q{color:var(--muted);font-size:15px}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:7px;font-family:var(--display);font-size:16px;color:#14161d;background:var(--c);margin-right:8px;flex:none}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);padding:9px 14px;font-weight:700}
+button:hover{border-color:var(--muted)}
+button:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--D);outline-offset:2px}
+button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.go{background:var(--S);color:#0d1a19;border-color:var(--S)}
+.screen{background:#0c0d12;border:1px solid var(--line);border-radius:14px;padding:20px;min-height:340px;display:flex;flex-direction:column;gap:12px}
+.screen .before{color:var(--muted);font-style:italic}
+.screen .before.cut{text-decoration:line-through}
+.line{display:flex;align-items:flex-start;gap:4px;transition:opacity .45s, transform .45s}
+.line.hide{opacity:.12;transform:translateY(4px)}
+.timer{height:5px;background:var(--panel-2);border-radius:3px;overflow:hidden}
+.timer i{display:block;height:100%;width:0;background:var(--S);transition:width .3s}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.note{color:var(--muted);font-size:15px}
+.game{display:flex;flex-direction:column;gap:14px}
+.sentence{font-size:20px;font-weight:600;min-height:64px}
+.picks{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.picks button{font-family:var(--display);font-size:22px;padding:10px 0;border-color:var(--c);color:var(--c);background:transparent}
+.picks button:hover{background:var(--c);color:#14161d}
+.fb{min-height:26px;font-weight:700}
+.fb.ok{color:var(--good)} .fb.no{color:var(--bad)}
+.score{display:flex;gap:16px;color:var(--muted);font-variant-numeric:tabular-nums}
+.score b{color:var(--ink)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{display:flex;align-items:center;font-weight:800}
+.field .hint{color:var(--muted);font-weight:400;font-size:14px;margin-left:4px}
+textarea,select{font:inherit;color:var(--ink);background:#0c0d12;border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
+textarea{resize:vertical;min-height:52px}
+.result{border-left:5px solid var(--D)}
+.model{border-left:5px solid var(--T)}
+.checks{display:grid;gap:8px}
+.check{display:flex;gap:10px;align-items:center;font-weight:700}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--muted);flex:none}
+.dot.ok{background:var(--good)} .dot.no{background:var(--bad)}
+mark{background:transparent;color:var(--bad);text-decoration:underline wavy var(--bad);font-weight:800}
+.out{white-space:pre-wrap}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:620px){.rules{grid-template-columns:1fr}}
+.rules .panel b{font-family:var(--display);font-size:30px;display:block;color:var(--D)}
+.today-card{border-left:6px solid var(--D);display:flex;flex-direction:column;gap:10px}
+.today-card .now{font-family:var(--display);font-size:24px;line-height:1.2}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:14px;font-weight:700}
+.chip.focus{border-color:var(--D);color:var(--D)}
+.todo{display:flex;flex-direction:column;gap:6px;margin:0;padding-left:20px}
+a{color:var(--S);font-weight:800}
+.qbox{background:#0c0d12;border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.grid6{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:14px}
+@media (max-width:620px){.grid6{grid-template-columns:1fr 1fr}}
+.grid6 div{background:var(--panel-2);border-radius:8px;padding:8px}
+.grid6 b{display:block}
+.strip{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}
+.day{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted)}
+.day i{width:100%;aspect-ratio:1;border-radius:6px;background:var(--panel-2);border:1px solid var(--line)}
+.day i.done{background:var(--good);border-color:var(--good)}
+.day i.rest{background:transparent;border-style:dashed}
+.day.is-today b{color:var(--D)}
+.donebtn.isdone{background:var(--good);border-color:var(--good);color:#0d1a12}
+input[type=date]{font:inherit;color:var(--ink);background:#0c0d12;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+summary{cursor:pointer}
+@media (prefers-reduced-motion:reduce){.line,.timer i{transition:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:12px">
+  <span class="step">My writing lab</span>
+  <h1>Show, Don't Tell: the ABSDT camera</h1>
+  <p class="lead">A <b>telling</b> sentence gives the reader a fact. A <b>showing</b> sentence lets the reader see it and work out the feeling. Examiners give the most Content marks to the moment you slow down and show. Five letters help you do it.</p>
+  <div class="compare">
+    <div class="panel tell"><span class="tag">Telling (Band 3)</span><p>I found a wallet with a lot of money and I was tempted to keep it.</p></div>
+    <div class="panel show"><span class="tag">Showing (Band 4 to 5)</span><p>A thick stack of red hundred-dollar notes stared back at me. My breath caught in my throat. My fingers tightened around the wallet.</p></div>
+  </div>
+</header>
+
+<section id="today" aria-labelledby="h-today">
+  <span class="step" id="clock">Today</span>
+  <h2 id="h-today">Today's mission</h2>
+  <div class="panel today-card" id="mission"></div>
+  <div class="panel" id="weekBox"></div>
+  <div class="panel">
+    <span class="tag">My log, last 14 days</span>
+    <div class="strip" id="strip"></div>
+    <p class="note" id="logSummary" style="margin-top:8px"></p>
+    <div class="ctrl" style="margin-top:10px">
+      <button id="copyLog">Copy log to send to Claude</button>
+      <span class="note" id="logCopied"></span>
+    </div>
+  </div>
+  <details class="note">
+    <summary>For parents: preview another day</summary>
+    <div class="ctrl" style="margin-top:8px"><label for="previewDate">Date</label><input type="date" id="previewDate"><button id="previewReset">Back to today</button></div>
+  </details>
+</section>
+
+<section id="letters" aria-labelledby="h-letters">
+  <span class="step">Step 1 · Learn the letters</span>
+  <h2 id="h-letters">Five kinds of showing sentence</h2>
+  <div class="letters">
+    <div class="lcard" style="--c:var(--A)"><b>A</b><span class="nm">Action</span><span class="q">What did I do?</span></div>
+    <div class="lcard" style="--c:var(--B)"><b>B</b><span class="nm">Body</span><span class="q">What did my body do by itself? Heart, hands, breath, face.</span></div>
+    <div class="lcard" style="--c:var(--S)"><b>S</b><span class="nm">Senses</span><span class="q">What did I see, hear, smell or feel?</span></div>
+    <div class="lcard" style="--c:var(--D)"><b>D</b><span class="nm">Dialogue</span><span class="q">What did someone say?</span></div>
+    <div class="lcard" style="--c:var(--T)"><b>T</b><span class="nm">Thought</span><span class="q">What went through my mind?</span></div>
+  </div>
+</section>
+
+<section id="watch" aria-labelledby="h-watch">
+  <span class="step">Step 2 · Watch it in slow motion</span>
+  <h2 id="h-watch">One telling sentence becomes a whole scene</h2>
+  <p class="lead">Press Play. The telling sentence is crossed out, then the scene builds one sentence at a time. Watch which letters appear.</p>
+  <div class="tabs" role="tablist" id="sceneTabs"></div>
+  <div class="screen" id="screen" aria-live="polite"></div>
+  <div class="timer"><i id="bar"></i></div>
+  <div class="ctrl">
+    <button class="go" id="play">▶ Play</button>
+    <button id="replay">Replay</button>
+    <button id="showAll">Show all</button>
+    <span class="note" id="count"></span>
+  </div>
+</section>
+
+<section id="label" aria-labelledby="h-game">
+  <span class="step">Step 3 · Label it</span>
+  <h2 id="h-game">Which letter is this sentence?</h2>
+  <p class="lead">Pick a scene, then tap the letter for each sentence. <b>Mixed test</b> pulls 15 random sentences from all four scenes, so it is different every time.</p>
+  <div class="tabs" id="setTabs"></div>
+  <div class="panel game">
+    <div class="score"><span>Question <b id="qn">1</b> of <b id="qt">12</b></span><span>Score <b id="sc">0</b></span><span>Best <b id="best">0</b></span></div>
+    <p class="sentence" id="sentence"></p>
+    <div class="picks" id="picks"></div>
+    <p class="fb" id="fb" aria-live="polite"></p>
+    <div class="ctrl"><button id="next">Next sentence</button><button id="restart">Start again</button></div>
+  </div>
+</section>
+
+<section id="tellshow" aria-labelledby="h-tos">
+  <span class="step">Step 4 · Tell or show?</span>
+  <h2 id="h-tos">Is this sentence telling or showing?</h2>
+  <p class="lead">20 sentences in random order. A telling sentence names the feeling or fact. A showing sentence gives a picture so the reader works it out.</p>
+  <div class="panel game">
+    <div class="score"><span>Question <b id="tqn">1</b> of <b>20</b></span><span>Score <b id="tsc">0</b></span><span>Best <b id="tbest">0</b></span></div>
+    <p class="sentence" id="tsent"></p>
+    <div class="ctrl"><button id="tTell" style="min-width:120px">Telling</button><button id="tShow" class="go" style="min-width:120px">Showing</button></div>
+    <p class="fb" id="tfb" aria-live="polite"></p>
+    <div class="ctrl"><button id="tnext">Next sentence</button><button id="trestart">Start again</button></div>
+  </div>
+</section>
+
+<section id="rewrite" aria-labelledby="h-best">
+  <span class="step">Step 5 · Pick the best rewrite</span>
+  <h2 id="h-best">Which rewrite would score the most marks?</h2>
+  <p class="lead">Watch out for two traps: adding "very" (still telling) and piling up idioms (sounds memorised). The best answer is one clear picture.</p>
+  <div class="panel game">
+    <div class="score"><span>Question <b id="bqn">1</b> of <b id="bqt">8</b></span><span>Score <b id="bsc">0</b></span><span>Best <b id="bbest">0</b></span></div>
+    <p class="sentence" id="bq"></p>
+    <div id="bopts" style="display:flex;flex-direction:column;gap:8px"></div>
+    <p class="fb" id="bfb" aria-live="polite"></p>
+    <div class="ctrl"><button id="bnext">Next question</button><button id="brestart">Start again</button></div>
+  </div>
+</section>
+
+<section id="builder" aria-labelledby="h-build">
+  <span class="step">Step 6 · Freeze-frame builder</span>
+  <h2 id="h-build">Turn one telling sentence into five showing sentences</h2>
+  <p class="lead">Pick a telling sentence. Write one sentence for each letter. Do not use the feeling word itself. Then compare yours with the model.</p>
+  <div class="panel game">
+    <div class="field">
+      <label for="prompt">Telling sentence</label>
+      <select id="prompt"></select>
+    </div>
+    <div id="fields" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div class="ctrl">
+      <button class="go" id="build">Build my paragraph</button>
+      <button id="model">Show a model answer</button>
+      <button id="clear">Clear</button>
+    </div>
+    <div class="panel result" id="mine" hidden><span class="tag">Your paragraph</span><p class="out" id="mineText"></p>
+      <div class="ctrl" style="margin-top:10px"><button id="copy">Copy paragraph</button><span class="note" id="copied"></span></div></div>
+    <div class="panel model" id="modelBox" hidden><span class="tag">One model answer</span><div id="modelText" style="display:flex;flex-direction:column;gap:6px"></div></div>
+  </div>
+</section>
+
+<section id="checker" aria-labelledby="h-check">
+  <span class="step">Step 7 · Check your climax</span>
+  <h2 id="h-check">The climax checker</h2>
+  <p class="lead">Paste or type the climax paragraph of your composition. The checker underlines feeling words you named instead of showed, and checks the three climax rules.</p>
+  <div class="rules">
+    <div class="panel"><b>100+</b>words in the climax</div>
+    <div class="panel"><b>0</b>feeling words named</div>
+    <div class="panel"><b>≤ 2</b>lines of dialogue</div>
+  </div>
+  <div class="panel game">
+    <div class="field"><label for="climax">Your climax paragraph</label>
+      <textarea id="climax" rows="6">I was very nervous. I looked at Allan's paper and copied the answers. I was scared Mr Tan would see me. "What are you doing?" he asked. I felt guilty.</textarea></div>
+    <div class="checks" id="checks"></div>
+    <div class="panel"><span class="tag">Feeling words underlined</span><p class="out" id="marked"></p></div>
+  </div>
+</section>
+
+<footer class="note">Climax rule of thumb: use at least 4 of the 5 letters, keep dialogue to 2 lines or fewer, and never name the emotion. Show it with B.</footer>
+</main>
+
+<script>
+const C={A:'var(--A)',B:'var(--B)',S:'var(--S)',D:'var(--D)',T:'var(--T)'};
+const NAME={A:'Action',B:'Body',S:'Senses',D:'Dialogue',T:'Thought'};
+const badge=l=>`<span class="badge" style="--c:${C[l]}">${l}</span>`;
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let store={};try{store=JSON.parse(localStorage.getItem('absdt')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('absdt',JSON.stringify(store))}catch(e){}};
+
+/* ---------- Step 2: slow-motion scenes ---------- */
+const SCENES=[
+ {name:'The wallet',tell:'I found a wallet with a lot of money and I was tempted to keep it.',lines:[
+  ['S','Something brown was wedged between the bench slats.'],
+  ['A','I pulled it out and flipped it open.'],
+  ['S','A thick stack of red hundred-dollar notes stared back at me.'],
+  ['B','My breath caught in my throat.'],
+  ['T','That’s more than a year of pocket money, I thought.'],
+  ['A','I glanced left and right. The void deck was empty.'],
+  ['B','My fingers tightened around the wallet.'],
+  ['D','“Finders keepers,” a small voice in my head whispered.']]},
+ {name:'The exam',tell:'I was caught between a rock and a hard place.',lines:[
+  ['T','If I copy, I pass. If I don’t, I fail.'],
+  ['B','My pencil trembled above the blank page.'],
+  ['A','I lowered my eyes to my paper, then slid them to the left.'],
+  ['S','The clock ticked loudly above the silent hall.'],
+  ['T','Mum is sick. I can’t bring home a fail.']]},
+ {name:'The skateboard',tell:'I broke my friend’s skateboard and felt terrible.',lines:[
+  ['A','I pushed off hard and leaned into the turn.'],
+  ['S','Crack! The sound echoed across the empty court.'],
+  ['A','I tumbled onto the concrete and scrambled back to the board.'],
+  ['S','A jagged split ran through the middle of Wei Ming’s brand-new deck.'],
+  ['B','My stomach dropped.'],
+  ['T','He saved for three months for this.'],
+  ['D','“Is it okay?” Wei Ming called, jogging over.']]}
+];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let sc=0,shown=0,timer=null;
+const screen=document.getElementById('screen'),bar=document.getElementById('bar'),count=document.getElementById('count'),playBtn=document.getElementById('play');
+function drawScene(){
+  const s=SCENES[sc];
+  screen.innerHTML=`<p class="before${shown>0?' cut':''}">Telling: ${esc(s.tell)}</p>`+
+   s.lines.map((l,i)=>`<div class="line${i<shown?'':' hide'}">${badge(l[0])}<span>${esc(l[1])}</span></div>`).join('');
+  bar.style.width=(shown/s.lines.length*100)+'%';
+  const used=new Set(s.lines.slice(0,shown).map(l=>l[0]));
+  count.textContent=shown?`${shown} sentences · letters used: ${[...used].join(' ')}`:'1 telling sentence';
+}
+function stop(){clearInterval(timer);timer=null;playBtn.textContent='▶ Play'}
+function play(){
+  if(timer){stop();return}
+  if(shown>=SCENES[sc].lines.length)shown=0;
+  if(reduce){shown=SCENES[sc].lines.length;drawScene();return}
+  playBtn.textContent='❚❚ Pause';
+  timer=setInterval(()=>{shown++;drawScene();if(shown>=SCENES[sc].lines.length)stop()},1800);
+  if(shown===0){shown=1;drawScene()}
+}
+const tabs=document.getElementById('sceneTabs');
+SCENES.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.name;b.setAttribute('role','tab');b.id='tab'+i;
+ b.onclick=()=>{sc=i;shown=0;stop();[...tabs.children].forEach((t,j)=>{t.classList.toggle('on',j===i);t.setAttribute('aria-selected',j===i)});drawScene()};tabs.appendChild(b)});
+tabs.children[0].classList.add('on');
+playBtn.onclick=play;
+document.getElementById('replay').onclick=()=>{stop();shown=0;drawScene();play()};
+document.getElementById('showAll').onclick=()=>{stop();shown=SCENES[sc].lines.length;drawScene()};
+shown=SCENES[0].lines.length;drawScene();
+
+/* ---------- Step 3: label game ---------- */
+const SETS={
+'The diving board':[
+ ['My knees wobbled as I climbed the ladder.','B'],
+ ['“Don’t look down!” Coach shouted.','D'],
+ ['The sharp smell of chlorine stung my nose.','S'],
+ ['I gripped the rail and took one more step.','A'],
+ ['What if I slip? I wondered.','T'],
+ ['Cold sweat trickled down my back.','B'],
+ ['Below me, the water shimmered like broken glass.','S'],
+ ['I shuffled to the very edge of the board.','A'],
+ ['“You can do it!” my sister yelled from the stands.','D'],
+ ['Everyone is watching me, I thought.','T'],
+ ['My heart pounded against my ribs.','B'],
+ ['I squeezed my eyes shut and jumped.','A']
+],
+'The penalty kick':[
+ ['I placed the ball on the white spot and stepped back.','A'],
+ ['The crowd’s chanting faded into a dull hum.','S'],
+ ['My legs felt like jelly.','B'],
+ ['“Just aim low,” Daniel whispered as he jogged past.','D'],
+ ['The goalkeeper is so tall, I thought.','T'],
+ ['I wiped my palms on my shorts.','A'],
+ ['A bead of sweat rolled into my eye.','B'],
+ ['The referee’s whistle pierced the air.','S'],
+ ['What if I miss in front of the whole school?','T'],
+ ['I took a deep breath and ran forward.','A'],
+ ['My heart hammered in my ears.','B'],
+ ['“Goal!” the commentator roared.','D']
+],
+'Lost in the mall':[
+ ['Strangers’ faces blurred past me in every direction.','S'],
+ ['I spun around, searching every aisle.','A'],
+ ['A lump rose in my throat.','B'],
+ ['Where did Mum go? I wondered.','T'],
+ ['“Attention, shoppers,” a voice boomed over the speakers.','D'],
+ ['The smell of buttered popcorn drifted from the cinema.','S'],
+ ['My bottom lip began to tremble.','B'],
+ ['I pushed through the crowd towards the information counter.','A'],
+ ['She told me to wait by the escalator, I remembered.','T'],
+ ['“Are you lost, boy?” a security guard asked.','D'],
+ ['Tears blurred my vision.','B'],
+ ['I clutched the strap of my bag tightly.','A']
+],
+'The baking disaster':[
+ ['Thick grey smoke curled out of the oven.','S'],
+ ['I yanked the oven door open.','A'],
+ ['My eyes watered and stung.','B'],
+ ['“Something’s burning!” my sister shrieked.','D'],
+ ['Mum’s birthday cake is ruined, I thought.','T'],
+ ['The smoke alarm let out an ear-piercing beep.','S'],
+ ['I grabbed a towel and fanned the smoke away.','A'],
+ ['My cheeks burned.','B'],
+ ['How am I going to explain this?','T'],
+ ['“Open the windows, quick!” Dad shouted.','D'],
+ ['The cake was black and as hard as a rock.','S'],
+ ['I slumped onto the kitchen stool.','A']
+]};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let setName='The diving board',QS=SETS[setName];
+const WHY={A:'It is something he chose to do.',B:'His body did it by itself. He did not choose it.',S:'It is something he could see, hear, smell or feel.',D:'Someone said it out loud, inside quotation marks.',T:'It happened inside his head.'};
+let qi=0,score=0,answered=false;
+const sEl=document.getElementById('sentence'),fb=document.getElementById('fb');
+store.bests=store.bests||{};
+function bestKey(){return 'label:'+setName}
+function startSet(name){setName=name;QS=name==='Mixed test'?shuffle(Object.values(SETS).flat()).slice(0,15):SETS[name];
+ qi=0;score=0;document.getElementById('sc').textContent=0;document.getElementById('qt').textContent=QS.length;
+ document.getElementById('best').textContent=store.bests[bestKey()]||0;
+ [...setTabs.children].forEach(t=>t.classList.toggle('on',t.textContent===name));showQ()}
+const setTabs=document.getElementById('setTabs');
+[...Object.keys(SETS),'Mixed test'].forEach(n=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>startSet(n);setTabs.appendChild(b)});
+const picks=document.getElementById('picks');
+'ABSDT'.split('').forEach(l=>{const b=document.createElement('button');b.textContent=l;b.style.setProperty('--c',C[l]);b.setAttribute('aria-label',NAME[l]);b.onclick=()=>pick(l);picks.appendChild(b)});
+function showQ(){answered=false;fb.textContent='';fb.className='fb';
+ if(qi>=QS.length){sEl.textContent=`Finished! You scored ${score} out of ${QS.length}.`+(score===QS.length?' Perfect.':' Press Start again to beat it.');
+  if(score>(store.bests[bestKey()]||0)){store.bests[bestKey()]=score;save();document.getElementById('best').textContent=score}return}
+ document.getElementById('qn').textContent=qi+1;sEl.textContent=QS[qi][0]}
+function pick(l){if(answered||qi>=QS.length)return;answered=true;const k=QS[qi][1];
+ if(l===k){score++;fb.className='fb ok';fb.textContent=`Yes, ${k} for ${NAME[k]}. ${WHY[k]}`}
+ else{fb.className='fb no';fb.textContent=`Not quite. It is ${k} for ${NAME[k]}. ${WHY[k]}`}
+ document.getElementById('sc').textContent=score}
+document.getElementById('next').onclick=()=>{if(!answered&&qi<QS.length){fb.className='fb no';fb.textContent='Pick a letter first.';return}qi++;showQ()};
+document.getElementById('restart').onclick=()=>startSet(setName);
+startSet('The diving board');
+
+/* ---------- Step 4: tell or show ---------- */
+const TOS=[
+ ['She was very angry.','T'],['She slammed the door so hard that the windows rattled.','S'],
+ ['I was happy.','T'],['I punched the air and whooped.','S'],
+ ['He was tired.','T'],['His eyelids drooped and he yawned for the third time.','S'],
+ ['The food was delicious.','T'],['I scraped the last grain of rice off my plate and asked for more.','S'],
+ ['I felt embarrassed.','T'],['My face burned and I stared hard at my shoes.','S'],
+ ['The old man was kind.','T'],['The old man pressed a sweet into my palm and winked.','S'],
+ ['It was a very hot day.','T'],['The road shimmered and my shirt clung to my back.','S'],
+ ['I was shocked.','T'],['My jaw dropped and the spoon clattered onto the plate.','S'],
+ ['The classroom was noisy.','T'],['Chairs scraped, desks banged and thirty voices shouted at once.','S'],
+ ['My friend was jealous of my new phone.','T'],['Wei Ming glared at my new phone and walked off without a word.','S']
+];
+const TWHY={T:'It names the feeling or fact directly.',S:'It gives a picture, and the reader works out the feeling.'};
+let tq=[],ti=0,tscore=0,tans=false;
+const tsent=document.getElementById('tsent'),tfb=document.getElementById('tfb');
+function tStart(){tq=shuffle(TOS);ti=0;tscore=0;document.getElementById('tsc').textContent=0;document.getElementById('tbest').textContent=store.bests.tos||0;tShow()}
+function tShow(){tans=false;tfb.textContent='';tfb.className='fb';
+ if(ti>=tq.length){tsent.textContent=`Finished! ${tscore} out of 20.`;if(tscore>(store.bests.tos||0)){store.bests.tos=tscore;save();document.getElementById('tbest').textContent=tscore}return}
+ document.getElementById('tqn').textContent=ti+1;tsent.textContent=tq[ti][0]}
+function tPick(k){if(tans||ti>=tq.length)return;tans=true;const a=tq[ti][1];
+ if(k===a){tscore++;tfb.className='fb ok';tfb.textContent=`Yes, ${a==='T'?'telling':'showing'}. ${TWHY[a]}`}
+ else{tfb.className='fb no';tfb.textContent=`Not quite. It is ${a==='T'?'telling':'showing'}. ${TWHY[a]}`}
+ document.getElementById('tsc').textContent=tscore}
+document.getElementById('tTell').onclick=()=>tPick('T');
+document.getElementById('tShow').onclick=()=>tPick('S');
+document.getElementById('tnext').onclick=()=>{if(!tans&&ti<tq.length){tfb.className='fb no';tfb.textContent='Choose Telling or Showing first.';return}ti++;tShow()};
+document.getElementById('trestart').onclick=tStart;
+tStart();
+
+/* ---------- Step 5: best rewrite ---------- */
+const BEST=[
+ {q:'I was nervous before the exam.',o:[['I was very, very nervous before the exam.','Adding "very" still tells. It names the feeling.'],['My heart was a racing horse, butterflies danced in my stomach and I was as nervous as a cat.','Too many idioms piled together, and it still names the feeling.'],['I read the same line three times and still could not remember a word.','One clear picture. The reader can feel the nerves.',1]]},
+ {q:'The dog was scary.',o:[['The dog was super scary and frightening.','Two feeling words, no picture.'],['The dog bared its yellow teeth and a low growl rumbled in its throat.','Sight and sound. The reader is scared without being told.',1],['I was terrified because the dog was scary.','Explains the feeling instead of showing it.']]},
+ {q:'I was relieved when I found my key.',o:[['My shoulders sagged and I let out a long breath as my fingers closed around the key.','Body sentences show relief clearly.',1],['I felt very relieved and happy when I found my key.','Names two feelings. Still telling.'],['Relief washed over me like a giant tsunami of relief.','Repeats the feeling word and the comparison is over the top.']]},
+ {q:'My grandmother was weak.',o:[['My grandmother was very weak and frail.','Adds a synonym but no picture.'],['Grandma gripped the railing with both hands and paused after every step.','Action you can see. The reader knows she is weak.',1],['Grandma was weak, so she was not strong.','Says the same thing twice.']]},
+ {q:'The hall was quiet.',o:[['The hall was extremely quiet and silent.','"Quiet" and "silent" mean the same thing. Still telling.'],['The only sound in the hall was the scratch of pencils on paper.','A sound detail makes the silence real.',1],['It was quiet and I was nervous and everyone was quiet.','Run-on sentence, and it tells twice.']]},
+ {q:'He was angry with me.',o:[['He was furious and very mad at me.','Stronger feeling words, but still telling.'],['His face turned red, his blood boiled like a volcano and he erupted with anger.','Idioms stacked, and it names the feeling at the end.'],['He folded his arms and refused to look at me for the rest of recess.','Action shows the anger without naming it.',1]]},
+ {q:'I was proud of my medal.',o:[['I polished the medal every night and hung it where everyone could see it.','Action shows pride without naming it.',1],['I felt proud and happy about my medal.','Names two feelings.'],['I was as proud as a peacock, over the moon and on cloud nine.','Three idioms in a row sounds memorised.']]},
+ {q:'It was raining heavily.',o:[['It was raining very, very heavily.','"Very, very" adds nothing a reader can picture.'],['Rain hammered on the zinc roof and water gushed down the drains.','Sound and sight. The reader hears the storm.',1],['The rain was heavy rain that was very heavy.','Repeats itself.']]}
+];
+let bi=0,bscore=0,bans=false,border=[];
+const bq=document.getElementById('bq'),bopts=document.getElementById('bopts'),bfb=document.getElementById('bfb');
+document.getElementById('bqt').textContent=BEST.length;
+function bStart(){border=shuffle(BEST);bi=0;bscore=0;document.getElementById('bsc').textContent=0;document.getElementById('bbest').textContent=store.bests.best||0;bShow()}
+function bShow(){bans=false;bfb.textContent='';bfb.className='fb';bopts.innerHTML='';
+ if(bi>=border.length){bq.textContent=`Finished! ${bscore} out of ${BEST.length}.`;if(bscore>(store.bests.best||0)){store.bests.best=bscore;save();document.getElementById('bbest').textContent=bscore}return}
+ const it=border[bi];document.getElementById('bqn').textContent=bi+1;bq.textContent='Telling: '+it.q;
+ shuffle(it.o).forEach(o=>{const b=document.createElement('button');b.textContent=o[0];b.style.textAlign='left';b.style.fontWeight='600';
+  b.onclick=()=>{if(bans)return;bans=true;const good=it.o.find(x=>x[2]);
+   if(o[2]){bscore++;bfb.className='fb ok';bfb.textContent='Best choice. '+o[1];b.style.borderColor='var(--good)'}
+   else{bfb.className='fb no';bfb.textContent='Not the best. '+o[1]+' Best: "'+good[0]+'"';b.style.borderColor='var(--bad)'}
+   document.getElementById('bsc').textContent=bscore};bopts.appendChild(b)})}
+document.getElementById('bnext').onclick=()=>{if(!bans&&bi<border.length){bfb.className='fb no';bfb.textContent='Pick an answer first.';return}bi++;bShow()};
+document.getElementById('brestart').onclick=bStart;
+bStart();
+
+/* ---------- Step 4: freeze-frame builder ---------- */
+const PROMPTS=[
+ {tell:'I was nervous before my speech.',model:{A:'I shuffled to the front of the class and gripped the edge of the table.',B:'My palms were so sweaty that my note cards stuck together.',S:'Thirty pairs of eyes stared back at me in total silence.',D:'“Whenever you’re ready, Marcus,” Mrs Lee said gently.',T:'Please don’t let me forget my first line, I prayed.'}},
+ {tell:'I was angry with my brother.',model:{A:'I snatched the game console out of his hands.',B:'Heat rushed up my neck and my jaw clenched.',S:'The screen flashed GAME OVER. My saved level was gone.',D:'“You deleted three weeks of work!” I yelled.',T:'Why does he always touch my things?'}},
+ {tell:'I was excited to see my results.',model:{A:'I tore open the envelope with trembling fingers.',B:'A grin crept across my face before I had even read a word.',S:'The paper crinkled as I unfolded it.',D:'“Well? What did you get?” Mum asked, leaning over my shoulder.',T:'Please be an A. Please be an A.'}},
+ {tell:'I was scared in the dark corridor.',model:{A:'I tiptoed down the corridor, one hand on the wall.',B:'The hairs on my arms stood up.',S:'Somewhere behind me, a door creaked slowly open.',D:'“Hello? Is anyone there?” I whispered.',T:'I should have waited for the others.'}},
+ {tell:'I was jealous of my friend’s new bicycle.',model:{A:'When Ryan was not looking, I ran a finger along the shiny red frame.',B:'A hot, tight feeling crept into my chest.',S:'The bell went ting-ting as he rang it again and again.',D:'“Want a ride?” Ryan asked, grinning.',T:'Why does he always get the best things?'}},
+ {tell:'I was relieved when the doctor said I was fine.',model:{A:'I hopped off the bed and grabbed Mum’s hand.',B:'My shoulders, stiff all morning, finally dropped.',S:'The doctor’s pen scratched across the form.',D:'“Nothing broken. Just a sprain,” she said with a smile.',T:'No cast. I can still play on Saturday.'}},
+ {tell:'I felt guilty for lying to my mother.',model:{A:'I pushed the rice around my plate with my spoon.',B:'My throat felt too tight to swallow.',S:'Mum’s soft humming drifted from the kitchen.',D:'“You’re very quiet tonight,” she said, stroking my hair.',T:'If she knew the truth, would she still smile at me like that?'}},
+ {tell:'I was proud when I won the race.',model:{A:'I lifted the medal high so Dad could see it from the stands.',B:'I could not stop grinning.',S:'The cheers from the crowd rang in my ears.',D:'“That’s my boy!” Dad shouted.',T:'All those early-morning runs were worth it.'}},
+ {tell:'I was lonely on my first day at a new school.',model:{A:'I sat at the very end of the canteen bench and opened my lunch box.',B:'My stomach churned and I could not eat a bite.',S:'Laughter burst from the next table, where everyone seemed to know one another.',D:'“Is this seat taken?” a girl asked, then walked off before I could answer.',T:'I wish I were back at my old school.'}},
+ {tell:'I was shocked when I saw my test result.',model:{A:'I flipped the paper over twice to make sure it was mine.',B:'The blood drained from my face.',S:'A big red 42 was circled at the top of the page.',D:'“See me after class,” my teacher said quietly.',T:'How am I going to tell Dad?'}}
+];
+const HINT={A:'What did you do with your hands or feet?',B:'Heart, breath, face, hands, stomach.',S:'One thing you saw, heard, smelt or felt.',D:'One short line someone says. Remember the comma inside the quotation marks.',T:'A question or worry in your head.'};
+const sel=document.getElementById('prompt'),fields=document.getElementById('fields');
+PROMPTS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p.tell;sel.appendChild(o)});
+'ABSDT'.split('').forEach(l=>{const d=document.createElement('div');d.className='field';
+ d.innerHTML=`<label for="f${l}">${badge(l)}${NAME[l]}<span class="hint">${HINT[l]}</span></label><textarea id="f${l}" rows="2"></textarea>`;fields.appendChild(d)});
+function loadDraft(){const dr=(store.drafts||{})[sel.value]||{};'ABSDT'.split('').forEach(l=>document.getElementById('f'+l).value=dr[l]||'');
+ document.getElementById('mine').hidden=true;document.getElementById('modelBox').hidden=true}
+fields.addEventListener('input',()=>{store.drafts=store.drafts||{};const dr={};'ABSDT'.split('').forEach(l=>dr[l]=document.getElementById('f'+l).value);store.drafts[sel.value]=dr;save()});
+sel.onchange=loadDraft;
+document.getElementById('build').onclick=()=>{const parts='ABSDT'.split('').map(l=>document.getElementById('f'+l).value.trim()).filter(Boolean);
+ const box=document.getElementById('mine');box.hidden=false;
+ document.getElementById('mineText').textContent=parts.length?parts.join(' '):'Write at least one sentence first.';document.getElementById('copied').textContent=''};
+document.getElementById('model').onclick=()=>{const m=PROMPTS[sel.value].model;document.getElementById('modelText').innerHTML='ABSDT'.split('').map(l=>`<div class="line">${badge(l)}<span>${esc(m[l])}</span></div>`).join('');document.getElementById('modelBox').hidden=false};
+document.getElementById('clear').onclick=()=>{'ABSDT'.split('').forEach(l=>document.getElementById('f'+l).value='');fields.dispatchEvent(new Event('input'));document.getElementById('mine').hidden=true};
+document.getElementById('copy').onclick=async()=>{const t=document.getElementById('mineText').textContent;try{await navigator.clipboard.writeText(t);document.getElementById('copied').textContent='Copied.'}catch(e){document.getElementById('copied').textContent='Copy is blocked here. Select the text and copy it instead.'}};
+loadDraft();
+
+/* ---------- Step 5: climax checker ---------- */
+const FEEL=['nervous','scared','afraid','frightened','terrified','happy','sad','angry','furious','excited','worried','anxious','shocked','surprised','relieved','upset','glad','jealous','embarrassed','guilty','proud','delighted','disappointed','tempted','lonely','confused','annoyed','frustrated','ashamed'];
+const re=new RegExp('\\b('+FEEL.join('|')+')\\b','gi');
+const ta=document.getElementById('climax');
+function check(){const t=ta.value;const words=(t.match(/[A-Za-z’']+/g)||[]).length;
+ const feel=t.match(re)||[];const dl=(t.match(/“/g)||[]).length+Math.floor((t.match(/"/g)||[]).length/2);
+ const rows=[[words>=100,`${words} words (aim for 100 or more)`],[feel.length===0,feel.length?`${feel.length} feeling word${feel.length>1?'s':''} named: ${[...new Set(feel.map(f=>f.toLowerCase()))].join(', ')}. Show it with a B sentence instead.`:'No feeling words named. Good.'],[dl<=2,`${dl} line${dl===1?'':'s'} of dialogue (2 or fewer)`]];
+ document.getElementById('checks').innerHTML=rows.map(r=>`<div class="check"><span class="dot ${r[0]?'ok':'no'}"></span>${esc(r[1])}</div>`).join('');
+ document.getElementById('marked').innerHTML=esc(t).replace(re,'<mark>$1</mark>')||'Nothing typed yet.';
+ store.climax=t;save()}
+if(store.climax)ta.value=store.climax;
+ta.addEventListener('input',check);check();
+
+/* ---------- Today planner ---------- */
+const QB={
+ 1:{t:'A difficult decision',p:'(1) an open wallet stuffed with $100 notes on a bench, (2) an answer sheet with a pencil, (3) a broken skateboard. Use picture 1 or 3, not 2.',c:'Who had to make the difficult decision? What did the person finally decide to do, and what was the outcome?'},
+ 2:{t:'A mistake',p:'(1) a cracked mobile phone screen, (2) a cake that has collapsed, (3) a school bag left at a bus stop.',c:'What was the mistake, and how did it happen? How did you or the person put things right?'},
+ 3:{t:'An act of courage',p:'(1) a diving board above a pool, (2) a microphone on a stage, (3) a boy standing between a bully and a smaller child.',c:'What did the person have to be brave about? What happened as a result of the brave act?'},
+ 4:{t:'Helping someone',p:'(1) an elderly man with spilled groceries, (2) a crying child in a shopping mall, (3) a classmate sitting alone at recess.',c:'Who needed help, and why? How did helping change the way you or the other person felt?'},
+ 5:{t:'Losing something important',p:'(1) a house key, (2) a pet hamster’s empty cage, (3) a medal on a ribbon.',c:'What was lost, and why was it important? Was it found, and what did you learn?'},
+ 6:{t:'A misunderstanding',p:'(1) two friends turned away from each other, (2) a note folded in half, (3) a phone showing an unread message.',c:'What caused the misunderstanding? How was it cleared up?'},
+ 7:{t:'A promise',p:'(1) two hands with little fingers linked, (2) a calendar with a date circled, (3) a hospital bed.',c:'What promise was made, and why was it difficult to keep? Was it kept?'},
+ 8:{t:'A surprise',p:'(1) a wrapped present, (2) a door slightly open with darkness behind it, (3) an airport arrival gate.',c:'Who was surprised, and how? How did the person react?'}
+};
+const WEEKS=[
+ {start:'2026-11-02',kind:'warmup'},
+ {start:'2026-11-09',q:1,focus:'Slow-motion climax',goal:'Climax paragraph is 100+ words with A, B and S',n:1},
+ {start:'2026-11-16',q:2,focus:'Speech punctuation',goal:'No missing commas inside quotation marks',n:2},
+ {start:'2026-11-23',q:3,focus:'Hook opening',goal:'Open with dialogue, a sound or an action, never “One day”',n:3},
+ {start:'2026-11-30',q:4,focus:'Outcome + reflection ending',goal:'Last line links back to the opening',n:4},
+ {start:'2026-12-07',q:5,focus:'Pacing by word budget',goal:'Plan shows words per part; the climax gets the most',n:5},
+ {start:'2026-12-14',kind:'trip'},
+ {start:'2026-12-21',kind:'trip'},
+ {start:'2026-12-28',q:6,focus:'Full exam simulation',goal:'All five skills together, under time',n:6,sim:true},
+ {start:'2027-01-04',q:7,focus:'All five skills',goal:'24/36 or more',n:7,term:true},
+ {start:'2027-01-11',kind:'sw'},
+ {start:'2027-01-18',q:8,focus:'All five skills',goal:'24/36 or more',n:8,term:true},
+ {start:'2027-01-25',kind:'sw'}
+];
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const fmt=d=>d.toLocaleDateString('en-SG',{weekday:'short',day:'numeric',month:'short'});
+const link=(id,txt)=>`<a href="#${id}">${txt} ↓</a>`;
+function weekOf(d){let w=null;for(const x of WEEKS){if(parse(x.start)<=d)w=x}
+ if(w&&addDays(parse(w.start),7)<=d&&w===WEEKS[WEEKS.length-1])return {kind:'later'};return w}
+function stageOf(w){return w&&w.n?w.n:0}
+const GRID=`<div class="grid6"><div><b>1. Hook</b>40 words</div><div><b>2. Problem</b>60 words</div><div><b>3. Rising tension</b>80 words</div><div style="border:1px solid var(--D)"><b>4. CLIMAX</b>120 words, ABSDT</div><div><b>5. Outcome</b>80 words</div><div><b>6. Reflection</b>50 words</div></div>`;
+const qHtml=q=>`<div class="qbox"><b>Q${q}. ${QB[q].t}</b><span>Write a composition of at least 150 words (aim for 400) about <b>${QB[q].t.toLowerCase()}</b>.</span><span class="note">Pictures: ${QB[q].p}</span><span class="note">Consider: ${QB[q].c}</span></div>`;
+
+function plan(d){
+ const wd=d.getDay(),k=keyOf(d),w=weekOf(d);
+ const rest=(title,extra='')=>({kind:'rest',title,mins:0,body:extra});
+ if(k<'2026-11-03')return rest('Before the plan started');
+ if(k>='2026-12-14'&&k<='2026-12-22')return {kind:'trip',title:'Japan trip: 3-line diary',mins:5,where:'Hotel room, before sleep',
+  body:`<ol class="todo"><li>Write 3 sentences about today.</li><li>Each sentence uses a different sense: something you <b>saw</b>, <b>heard</b> and <b>felt</b> (cold snow, the lift, hot food).</li><li>No feeling words. Show it.</li></ol>`};
+ if(k>='2026-12-23'&&k<='2026-12-27')return rest('Holiday rest','Bedtime reading only. Enjoy the break.');
+ if(k==='2027-01-01')return rest('New Year’s Day','No task. The mock exam is moved to Wed 30 Dec.');
+ if(!w||w.kind==='later')return {kind:'task',title:'Ask Claude for this fortnight’s question',mins:5,where:'',body:'The 12-week plan is finished. Ask your dad to get the next set of questions from Claude.'};
+ if(wd===6)return rest('Free day','English tuition 4 to 6 pm. No home task.');
+ if(wd===0)return rest('Free day','No task. Bedtime reading only.');
+ if(w.kind==='warmup'){
+  const absdt={title:'Start the ABSDT lesson',mins:20,body:`<ol class="todo"><li>${link('letters','Step 1: learn the 5 letters')}</li><li>${link('watch','Step 2: watch all 3 scenes')}</li><li>${link('label','Step 3: label the diving board scene')}</li></ol>`};
+  const m={2:absdt,4:absdt,
+   3:{title:'Fix your own sentences',mins:15,body:'<ol class="todo"><li>Review pack <b>Exercise 1</b>: rewrite the 12 sentences from your exam essay.</li><li>Check your answers with Dad.</li></ol>'},
+   5:{title:'Write your missing climax',mins:15,body:`<ol class="todo"><li>Review pack <b>Exercise 3</b>: 100–120 words between “Finally, I made my decision” and “One week later”.</li><li>Paste it into ${link('checker','Step 7: climax checker')}</li></ol>`},
+   
+   1:{title:'Show, don’t tell practice',mins:10,body:'<ol class="todo"><li>Review pack <b>Exercise 4</b>.</li></ol>'}};
+  const t=m[wd];return t?{kind:'task',where:'Study desk, phone in another room',...t}:rest('Free day');
+ }
+ if(w.kind==='trip')return rest('Holiday rest');
+ const st=stageOf(w);
+ if(w.kind==='sw'){
+  const m={1:{title:'Revise last Friday’s paragraph',mins:15,body:'<ol class="todo"><li>Rewrite the paragraph Claude flagged.</li></ol>'},
+   2:{title:'Mixed test + builder',mins:15,body:`<ol class="todo"><li>${link('label','Mixed test')} (aim 13/15)</li><li>${link('builder','Step 6: one freeze-frame')}</li></ol>`},
+   3:{title:'Situational writing practice',mins:20,body:'<ol class="todo"><li>Ask Dad for this week’s situational writing task from Claude.</li><li>Underline purpose, audience and the point you must make up yourself.</li></ol>'},
+   4:rest('Reading only'),5:{title:'Bedtime reading + read like a writer',mins:15,body:'<ol class="todo"><li>Copy one exciting paragraph from your book and label it A B S D T.</li></ol>'}};
+  const t=m[wd];return t.kind?t:{kind:'task',where:'Study desk',...t};
+ }
+ const first=st===1;
+ if(wd===1)return {kind:'task',title:first?'Show, don’t tell warm-up':'Revise Friday’s paragraph',mins:15,where:'Study desk',
+  body:first?`<ol class="todo"><li>${link('tellshow','Step 4: Tell or show?')} (20 questions)</li><li>Review pack Exercise 4 if not done.</li></ol>`
+   :`<ol class="todo"><li>Read Claude’s marking: one line to keep, one paragraph to rewrite.</li><li>Rewrite that paragraph.</li><li>Paste it into ${link('checker','Step 7: climax checker')}. All 3 dots green?</li></ol>`};
+ if(wd===2){let body;
+  if(st<=1)body=`<ol class="todo"><li>Copy one exciting paragraph from your book and label each sentence A B S D T.</li><li>${link('label','Step 3: penalty kick scene')}</li></ol>`;
+  else if(st===2)body=`<ol class="todo"><li>${link('label','Mixed test')} (aim 13/15)</li><li>${link('rewrite','Step 5: pick the best rewrite')}</li></ol>`;
+  else body=`<ol class="todo"><li>${link('label','Mixed test')} as a 2-minute warm-up</li><li>Copy and label one paragraph from your book.</li><li>${link('builder','Step 6: one freeze-frame')}</li></ol>`;
+  return {kind:'task',title:'Read like a writer',mins:15,where:'Study desk, with your novel',body}}
+ if(wd===3){
+  if(w.sim)return {kind:'task',title:'MOCK EXAM: Paper 1 in 70 minutes',mins:70,where:'Dining table, timer on, Dad nearby',
+   body:`<ol class="todo"><li>Situational writing: 18 min (Dad gives you the task).</li><li>Plan the composition: 8 min.</li><li>Write: 40 min.</li><li>Check: 4 min. Speech commas, full stops, ABSDT in the climax.</li></ol>${qHtml(w.q)}${GRID}`};
+  return {kind:'task',title:`Plan Friday’s composition: Q${w.q}`,mins:15,where:'Study desk',
+  body:`<ol class="todo"><li>Read the question. Circle who decides and what the outcome must be.</li><li>8-minute plan in the 6 boxes, keywords only.</li><li>${link('builder','Step 6: one freeze-frame')} for your climax moment.</li></ol>${qHtml(w.q)}${GRID}`};}
+ if(wd===4)return rest('Reading only','No task tonight. Bedtime reading, 15 minutes.');
+ if(wd===5){if(w.sim)return rest('Rest','Well done on the mock exam. Bedtime reading only.');
+  return {kind:'task',title:`Composition: Q${w.q} ${QB[w.q].t}`,mins:50,where:'Dining table, timer on, Dad in the room',
+  body:`<ol class="todo"><li>Use Wednesday’s plan. 50 minutes on lined paper, at least 400 words.</li><li>This week’s focus: <b>${w.focus}</b>. ${w.goal}.</li><li>Dad photographs every page and sends it to Claude.</li></ol>${qHtml(w.q)}`};}
+ return rest('Free day');
+}
+function nextTask(d){for(let i=1;i<10;i++){const x=addDays(d,i),p=plan(x);if(p.kind!=='rest')return {d:x,p}}return null}
+
+store.log=store.log||{};
+let preview=null;
+function nowDate(){if(preview){const d=parse(preview);d.setHours(19,30);return d}return new Date()}
+function render(){
+ const now=nowDate(),k=keyOf(now),p=plan(now),h=now.getHours()+now.getMinutes()/60,w=weekOf(now);
+ document.getElementById('clock').textContent=now.toLocaleDateString('en-SG',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · '+now.toLocaleTimeString('en-SG',{hour:'numeric',minute:'2-digit'})+(preview?' (preview)':'');
+ const done=!!store.log[k],nx=nextTask(now);
+ let lead;
+ if(p.kind==='rest')lead=`${p.title}. ${p.body||''}`;
+ else if(done)lead='Done for today. Bedtime reading, then sleep.';
+ else if(h<18)lead=`Tonight after dinner (${p.mins} min)`;
+ else if(h<21.5)lead=`Now is a good time (${p.mins} min)`;
+ else lead=p.mins>=50?'Too late to start a 50-minute task tonight. Do it Saturday morning instead, before tuition.':'It’s late. Bedtime reading only tonight. Skip this one and pick up the next task.';
+ let html=`<div class="now">${p.kind==='rest'?esc(p.title):esc(p.title)}</div><div class="meta">`;
+ if(p.mins)html+=`<span class="chip">${p.mins} min</span>`;
+ if(p.where)html+=`<span class="chip">Where: ${esc(p.where)}</span>`;
+ if(w&&w.focus)html+=`<span class="chip focus">Focus this week: ${esc(w.focus)}</span>`;
+ html+=`</div><p><b>${lead}</b></p>`;
+ if(p.kind!=='rest')html+=p.body+`<div class="ctrl"><button class="donebtn${done?' isdone':''}" id="doneBtn">${done?'✓ Done today (tap to undo)':'Mark today’s task done'}</button></div>`;
+ html+=`<p class="note">Every night: 15 minutes of reading at bedtime.${nx?` Next task: <b>${fmt(nx.d)}</b>, ${esc(nx.p.title)}.`:''}</p>`;
+ document.getElementById('mission').innerHTML=html;
+ const db=document.getElementById('doneBtn');
+ if(db)db.onclick=()=>{if(store.log[k])delete store.log[k];else store.log[k]={t:new Date().toISOString(),task:p.title};save();render()};
+ // week box
+ let wb='';
+ if(w&&w.q){const fri=addDays(parse(w.start),w.sim?2:4);
+  wb=`<span class="tag">This week</span><p><b>Q${w.q}. ${QB[w.q].t}</b>. ${w.sim?'Mock exam':'Composition'} on <b>${fmt(fri)}</b>. Focus: ${esc(w.focus)}. Done means: ${esc(w.goal)}.</p>`;}
+ else if(w&&w.kind==='warmup')wb='<span class="tag">This week</span><p><b>Warm-up week.</b> Work through the review pack and learn ABSDT. The first composition is on <b>Fri 13 Nov</b>.</p>';
+ else if(w&&w.kind==='trip')wb='<span class="tag">This week</span><p><b>Holiday.</b> No compositions. Optional 3-line trip diary during the trip.</p>';
+ else if(w&&w.kind==='sw')wb='<span class="tag">This week</span><p><b>Situational writing week.</b> No composition. Short tasks only.</p>';
+ const cp=parse('2026-12-30'),days=Math.ceil((cp-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/864e5);
+ if(days>0)wb+=`<p class="note">${days} days to the mock exam checkpoint on Wed 30 Dec.</p>`;
+ document.getElementById('weekBox').innerHTML=wb||'<p class="note">No plan for this date.</p>';
+ // strip
+ const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());let st='',planned=0,did=0;
+ for(let i=13;i>=0;i--){const d=addDays(today,-i),dk=keyOf(d),dp=plan(d),isDone=!!store.log[dk];
+  if(dp.kind!=='rest'&&i<7){planned++;if(isDone)did++}
+  st+=`<div class="day${i===0?' is-today':''}"><i class="${isDone?'done':dp.kind==='rest'?'rest':''}" title="${fmt(d)}: ${esc(dp.title)}"></i><b>${'SMTWTFS'[d.getDay()]}</b></div>`}
+ document.getElementById('strip').innerHTML=st;
+ document.getElementById('logSummary').textContent=`Last 7 days: ${did} of ${planned} tasks done. Green = done, dashed = rest day, grey = not done.`;
+}
+document.getElementById('copyLog').onclick=async()=>{const now=nowDate();const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());let lines=['Writing log (last 14 days)'];
+ for(let i=13;i>=0;i--){const d=addDays(today,-i),dk=keyOf(d),dp=plan(d),l=store.log[dk];
+  lines.push(`${dk} ${'SunMonTueWedThuFriSat'.substr(d.getDay()*3,3)}: ${dp.title} — ${l?'DONE '+new Date(l.t).toLocaleTimeString('en-SG',{hour:'numeric',minute:'2-digit'}):dp.kind==='rest'?'rest':'not done'}`)}
+ const b=store.bests||{};lines.push(`Best scores: mixed test ${b['label:Mixed test']||0}/15, tell-or-show ${b.tos||0}/20, best rewrite ${b.best||0}/8`);
+ try{await navigator.clipboard.writeText(lines.join('\n'));document.getElementById('logCopied').textContent='Copied. Paste it into the chat with Claude.'}catch(e){document.getElementById('logCopied').textContent='Copy is blocked here. Take a screenshot of this box instead.'}};
+document.getElementById('previewDate').onchange=e=>{preview=e.target.value||null;render()};
+document.getElementById('previewReset').onclick=()=>{preview=null;document.getElementById('previewDate').value='';render()};
+render();setInterval(()=>{if(!preview)render()},60000);
+</script>
+</body>
+</html>
