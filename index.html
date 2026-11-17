@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -102,6 +103,12 @@ a{color:var(--S);font-weight:800}
 .donebtn.isdone{background:var(--good);border-color:var(--good);color:#0d1a12}
 input[type=date]{font:inherit;color:var(--ink);background:#0c0d12;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
 summary{cursor:pointer}
+.points{display:flex;flex-direction:column;gap:8px}
+.points label{display:flex;gap:10px;align-items:flex-start;font-weight:600;cursor:pointer}
+.points input{width:20px;height:20px;margin-top:3px;accent-color:var(--S);flex:none}
+.made{color:var(--D);font-size:14px;font-weight:800;margin-left:4px}
+.swmeta{display:flex;flex-wrap:wrap;gap:8px}
+#swText{min-height:260px;line-height:1.6}
 @media (prefers-reduced-motion:reduce){.line,.timer i{transition:none}}
 </style>
 </head>
@@ -240,6 +247,70 @@ summary{cursor:pointer}
       <textarea id="climax" rows="6">I was very nervous. I looked at Allan's paper and copied the answers. I was scared Mr Tan would see me. "What are you doing?" he asked. I felt guilty.</textarea></div>
     <div class="checks" id="checks"></div>
     <div class="panel"><span class="tag">Feeling words underlined</span><p class="out" id="marked"></p></div>
+  </div>
+</section>
+
+<section id="sw" aria-labelledby="h-sw">
+  <span class="step">Step 8 · Situational writing</span>
+  <h2 id="h-sw">Situational writing: every point, in the right voice</h2>
+  <p class="lead">Situational writing is the first part of Paper 1, worth 14 marks: 6 for <b>Task Fulfilment</b> (every content point, the right purpose and reader) and 8 for <b>Language and Organisation</b> (tone, paragraphs, grammar). No ABSDT here. Clear, polite and complete is what scores.</p>
+  <div class="rules">
+    <div class="panel"><b>P</b>Purpose. Why am I writing? To ask, invite, report, thank or apologise. Say it in your first paragraph.</div>
+    <div class="panel"><b>A</b>Audience. A teacher, principal or stranger means <b>formal</b>. A friend or family member means <b>informal</b>.</div>
+    <div class="panel"><b>C</b>Content points. Usually 6. Some come from the task. Some you must <b>make up yourself</b>. Each point gets its own sentence or paragraph.</div>
+  </div>
+
+  <h3>Formal or informal?</h3>
+  <div class="panel game">
+    <div class="score"><span>Question <b id="oqn">1</b> of <b id="oqt">12</b></span><span>Score <b id="osc">0</b></span><span>Best <b id="obest">0</b></span></div>
+    <p class="sentence" id="osent"></p>
+    <div class="ctrl"><button id="oF" style="min-width:120px">Formal</button><button id="oI" class="go" style="min-width:120px">Informal</button></div>
+    <p class="fb" id="ofb" aria-live="polite"></p>
+    <div class="ctrl"><button id="onext">Next sentence</button><button id="orestart">Start again</button></div>
+  </div>
+
+  <h3>Write the task</h3>
+  <p class="lead">This week's task is picked for you. Underline the purpose and the reader first. Write for 20 minutes. Then fix every red dot and tick each content point you really covered.</p>
+  <div class="panel game">
+    <div class="field"><label for="swTask">Task</label><select id="swTask"></select></div>
+    <div class="qbox" id="swBrief"></div>
+    <div class="field"><label for="swText">Your email or letter</label>
+      <textarea id="swText" placeholder="Dear ..."></textarea></div>
+    <div class="checks" id="swChecks"></div>
+    <div class="panel"><span class="tag">Content points: tick the ones you covered</span><div class="points" id="swPoints"></div></div>
+    <div class="ctrl"><button class="go" id="swModel">Show a model answer</button><button id="swClear">Clear my writing</button></div>
+    <div class="panel model" id="swModelBox" hidden><span class="tag">One model answer</span><p class="out" id="swModelText"></p></div>
+  </div>
+</section>
+
+<section id="comp" aria-labelledby="h-comp">
+  <span class="step">Step 9 &middot; Friday composition</span>
+  <h2 id="h-comp">Write your composition here</h2>
+  <p class="lead">Friday, 2:30pm. Fifty minutes, at least 400 words. Plan first, then write straight through. <b>Spell-check and autocorrect are switched off on purpose</b> &mdash; spelling and capitals are real marks in the exam, so your own spelling is what has to be marked.</p>
+  <div class="panel game">
+    <div class="field"><label for="compQ">Question</label><select id="compQ"></select></div>
+    <div class="qbox" id="compBrief"></div>
+    <div class="panel"><span class="tag">Your 8-minute plan &mdash; keywords only, not sentences</span>
+      <div class="grid6" id="compPlan"></div></div>
+    <div class="swmeta">
+      <button class="go" id="compStart">&#9654; Start writing</button>
+      <span class="chip" id="compTimer">00:00 of 50:00</span>
+      <span class="chip" id="compWc">0 words</span>
+    </div>
+    <div class="field"><label for="compText">Your composition</label>
+      <textarea id="compText" rows="18" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" placeholder="Open with a hook &mdash; a line of dialogue, a sound, or an action. Never &quot;One day&quot;."></textarea></div>
+    <div class="ctrl">
+      <button class="go" id="compSubmit">Hand it in</button>
+      <button id="compReopen">Reopen to keep writing</button>
+      <span class="note" id="compStatus"></span>
+    </div>
+    <div class="checks" id="compChecks"></div>
+    <div class="panel" id="compFeelBox" hidden><span class="tag">Feeling words you named instead of showed</span><p class="out" id="compFeel"></p></div>
+    <details class="note"><summary>Wrote this one by hand instead?</summary>
+      <div class="points" style="margin-top:8px">
+        <label><input type="checkbox" id="compPaper"> I wrote this one by hand, on lined paper</label>
+        <label><input type="checkbox" id="compPhoto"> Dad has photographed every page and sent it to Claude</label>
+      </div></details>
   </div>
 </section>
 
@@ -386,7 +457,7 @@ function showQ(){answered=false;fb.textContent='';fb.className='fb';
  if(qi>=QS.length){sEl.textContent=`Finished! You scored ${score} out of ${QS.length}.`+(score===QS.length?' Perfect.':' Press Start again to beat it.');
   if(score>(store.bests[bestKey()]||0)){store.bests[bestKey()]=score;save();document.getElementById('best').textContent=score}return}
  document.getElementById('qn').textContent=qi+1;sEl.textContent=QS[qi][0]}
-function pick(l){if(answered||qi>=QS.length)return;answered=true;const k=QS[qi][1];
+function pick(l){if(answered||qi>=QS.length)return;answered=true;act('ans');const k=QS[qi][1];
  if(l===k){score++;fb.className='fb ok';fb.textContent=`Yes, ${k} for ${NAME[k]}. ${WHY[k]}`}
  else{fb.className='fb no';fb.textContent=`Not quite. It is ${k} for ${NAME[k]}. ${WHY[k]}`}
  document.getElementById('sc').textContent=score}
@@ -414,7 +485,7 @@ function tStart(){tq=shuffle(TOS);ti=0;tscore=0;document.getElementById('tsc').t
 function tShow(){tans=false;tfb.textContent='';tfb.className='fb';
  if(ti>=tq.length){tsent.textContent=`Finished! ${tscore} out of 20.`;if(tscore>(store.bests.tos||0)){store.bests.tos=tscore;save();document.getElementById('tbest').textContent=tscore}return}
  document.getElementById('tqn').textContent=ti+1;tsent.textContent=tq[ti][0]}
-function tPick(k){if(tans||ti>=tq.length)return;tans=true;const a=tq[ti][1];
+function tPick(k){if(tans||ti>=tq.length)return;tans=true;act('ans');const a=tq[ti][1];
  if(k===a){tscore++;tfb.className='fb ok';tfb.textContent=`Yes, ${a==='T'?'telling':'showing'}. ${TWHY[a]}`}
  else{tfb.className='fb no';tfb.textContent=`Not quite. It is ${a==='T'?'telling':'showing'}. ${TWHY[a]}`}
  document.getElementById('tsc').textContent=tscore}
@@ -443,7 +514,7 @@ function bShow(){bans=false;bfb.textContent='';bfb.className='fb';bopts.innerHTM
  if(bi>=border.length){bq.textContent=`Finished! ${bscore} out of ${BEST.length}.`;if(bscore>(store.bests.best||0)){store.bests.best=bscore;save();document.getElementById('bbest').textContent=bscore}return}
  const it=border[bi];document.getElementById('bqn').textContent=bi+1;bq.textContent='Telling: '+it.q;
  shuffle(it.o).forEach(o=>{const b=document.createElement('button');b.textContent=o[0];b.style.textAlign='left';b.style.fontWeight='600';
-  b.onclick=()=>{if(bans)return;bans=true;const good=it.o.find(x=>x[2]);
+  b.onclick=()=>{if(bans)return;bans=true;act('ans');const good=it.o.find(x=>x[2]);
    if(o[2]){bscore++;bfb.className='fb ok';bfb.textContent='Best choice. '+o[1];b.style.borderColor='var(--good)'}
    else{bfb.className='fb no';bfb.textContent='Not the best. '+o[1]+' Best: "'+good[0]+'"';b.style.borderColor='var(--bad)'}
    document.getElementById('bsc').textContent=bscore};bopts.appendChild(b)})}
@@ -453,7 +524,7 @@ bStart();
 
 /* ---------- Step 4: freeze-frame builder ---------- */
 const PROMPTS=[
- {tell:'I was nervous before my speech.',model:{A:'I shuffled to the front of the class and gripped the edge of the table.',B:'My palms were so sweaty that my note cards stuck together.',S:'Thirty pairs of eyes stared back at me in total silence.',D:'“Whenever you’re ready, Marcus,” Mrs Lee said gently.',T:'Please don’t let me forget my first line, I prayed.'}},
+ {tell:'I was nervous before my speech.',model:{A:'I shuffled to the front of the class and gripped the edge of the table.',B:'My palms were so sweaty that my note cards stuck together.',S:'Thirty pairs of eyes stared back at me in total silence.',D:'“Whenever you’re ready,” Mrs Lee said gently.',T:'Please don’t let me forget my first line, I prayed.'}},
  {tell:'I was angry with my brother.',model:{A:'I snatched the game console out of his hands.',B:'Heat rushed up my neck and my jaw clenched.',S:'The screen flashed GAME OVER. My saved level was gone.',D:'“You deleted three weeks of work!” I yelled.',T:'Why does he always touch my things?'}},
  {tell:'I was excited to see my results.',model:{A:'I tore open the envelope with trembling fingers.',B:'A grin crept across my face before I had even read a word.',S:'The paper crinkled as I unfolded it.',D:'“Well? What did you get?” Mum asked, leaning over my shoulder.',T:'Please be an A. Please be an A.'}},
  {tell:'I was scared in the dark corridor.',model:{A:'I tiptoed down the corridor, one hand on the wall.',B:'The hairs on my arms stood up.',S:'Somewhere behind me, a door creaked slowly open.',D:'“Hello? Is anyone there?” I whispered.',T:'I should have waited for the others.'}},
@@ -471,7 +542,7 @@ PROMPTS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.tex
  d.innerHTML=`<label for="f${l}">${badge(l)}${NAME[l]}<span class="hint">${HINT[l]}</span></label><textarea id="f${l}" rows="2"></textarea>`;fields.appendChild(d)});
 function loadDraft(){const dr=(store.drafts||{})[sel.value]||{};'ABSDT'.split('').forEach(l=>document.getElementById('f'+l).value=dr[l]||'');
  document.getElementById('mine').hidden=true;document.getElementById('modelBox').hidden=true}
-fields.addEventListener('input',()=>{store.drafts=store.drafts||{};const dr={};'ABSDT'.split('').forEach(l=>dr[l]=document.getElementById('f'+l).value);store.drafts[sel.value]=dr;save()});
+fields.addEventListener('input',()=>{act('drafts');store.drafts=store.drafts||{};const dr={};'ABSDT'.split('').forEach(l=>dr[l]=document.getElementById('f'+l).value);store.drafts[sel.value]=dr;save()});
 sel.onchange=loadDraft;
 document.getElementById('build').onclick=()=>{const parts='ABSDT'.split('').map(l=>document.getElementById('f'+l).value.trim()).filter(Boolean);
  const box=document.getElementById('mine');box.hidden=false;
@@ -492,7 +563,7 @@ function check(){const t=ta.value;const words=(t.match(/[A-Za-z’']+/g)||[]).le
  document.getElementById('marked').innerHTML=esc(t).replace(re,'<mark>$1</mark>')||'Nothing typed yet.';
  store.climax=t;save()}
 if(store.climax)ta.value=store.climax;
-ta.addEventListener('input',check);check();
+ta.addEventListener('input',()=>{if(ta.value.trim()&&ta.value.trim()!==CLIMAX_SEED.trim())act('climax');check()});check();
 
 /* ---------- Today planner ---------- */
 const QB={
@@ -514,7 +585,7 @@ const WEEKS=[
  {start:'2026-12-07',q:5,focus:'Pacing by word budget',goal:'Plan shows words per part; the climax gets the most',n:5},
  {start:'2026-12-14',kind:'trip'},
  {start:'2026-12-21',kind:'trip'},
- {start:'2026-12-28',q:6,focus:'Full exam simulation',goal:'All five skills together, under time',n:6,sim:true},
+ {start:'2026-12-28',kind:'sw'},
  {start:'2027-01-04',q:7,focus:'All five skills',goal:'24/36 or more',n:7,term:true},
  {start:'2027-01-11',kind:'sw'},
  {start:'2027-01-18',q:8,focus:'All five skills',goal:'24/36 or more',n:8,term:true},
@@ -538,8 +609,8 @@ function plan(d){
  if(k<'2026-11-03')return rest('Before the plan started');
  if(k>='2026-12-14'&&k<='2026-12-22')return {kind:'trip',title:'Japan trip: 3-line diary',mins:5,where:'Hotel room, before sleep',
   body:`<ol class="todo"><li>Write 3 sentences about today.</li><li>Each sentence uses a different sense: something you <b>saw</b>, <b>heard</b> and <b>felt</b> (cold snow, the lift, hot food).</li><li>No feeling words. Show it.</li></ol>`};
- if(k>='2026-12-23'&&k<='2026-12-27')return rest('Holiday rest','Bedtime reading only. Enjoy the break.');
- if(k==='2027-01-01')return rest('New Year’s Day','No task. The mock exam is moved to Wed 30 Dec.');
+ if(k>='2026-12-24'&&k<='2026-12-25')return rest('Holiday rest','Bedtime reading only. Enjoy the break.');
+ if(k==='2027-01-01')return rest('New Year’s Day','Public holiday. No task.');
  if(!w||w.kind==='later')return {kind:'task',title:'Ask Claude for this fortnight’s question',mins:5,where:'',body:'The 12-week plan is finished. Ask your dad to get the next set of questions from Claude.'};
  if(wd===6)return rest('Free day','English tuition 4 to 6 pm. No home task.');
  if(wd===0)return rest('Free day','No task. Bedtime reading only.');
@@ -557,7 +628,7 @@ function plan(d){
  if(w.kind==='sw'){
   const m={1:{title:'Revise last Friday’s paragraph',mins:15,body:'<ol class="todo"><li>Rewrite the paragraph Claude flagged.</li></ol>'},
    2:{title:'Mixed test + builder',mins:15,body:`<ol class="todo"><li>${link('label','Mixed test')} (aim 13/15)</li><li>${link('builder','Step 6: one freeze-frame')}</li></ol>`},
-   3:{title:'Situational writing practice',mins:20,body:'<ol class="todo"><li>Ask Dad for this week’s situational writing task from Claude.</li><li>Underline purpose, audience and the point you must make up yourself.</li></ol>'},
+   3:{title:'Situational writing practice',mins:30,body:`<ol class="todo"><li>${swLink(d)}.</li><li>Underline purpose, audience and the points you must make up yourself.</li><li>Write for 20 minutes, then fix every red dot and tick your content points.</li></ol>`},
    4:rest('Reading only'),5:{title:'Bedtime reading + read like a writer',mins:15,body:'<ol class="todo"><li>Copy one exciting paragraph from your book and label it A B S D T.</li></ol>'}};
   const t=m[wd];return t.kind?t:{kind:'task',where:'Study desk',...t};
  }
@@ -572,27 +643,151 @@ function plan(d){
   return {kind:'task',title:'Read like a writer',mins:15,where:'Study desk, with your novel',body}}
  if(wd===3){
   if(w.sim)return {kind:'task',title:'MOCK EXAM: Paper 1 in 70 minutes',mins:70,where:'Dining table, timer on, Dad nearby',
-   body:`<ol class="todo"><li>Situational writing: 18 min (Dad gives you the task).</li><li>Plan the composition: 8 min.</li><li>Write: 40 min.</li><li>Check: 4 min. Speech commas, full stops, ABSDT in the climax.</li></ol>${qHtml(w.q)}${GRID}`};
-  return {kind:'task',title:`Plan Friday’s composition: Q${w.q}`,mins:15,where:'Study desk',
-  body:`<ol class="todo"><li>Read the question. Circle who decides and what the outcome must be.</li><li>8-minute plan in the 6 boxes, keywords only.</li><li>${link('builder','Step 6: one freeze-frame')} for your climax moment.</li></ol>${qHtml(w.q)}${GRID}`};}
+   body:`<ol class="todo"><li>Situational writing: 18 min. Use ${swLink(d)}, written straight onto paper.</li><li>Plan the composition: 8 min.</li><li>Write: 40 min.</li><li>Check: 4 min. Speech commas, full stops, ABSDT in the climax.</li></ol>${qHtml(w.q)}${GRID}`};
+  return {kind:'task',title:`Situational writing, then plan Friday’s composition`,mins:90,when:'9:00am',whenH:9,where:'Study desk',
+  body:`<ol class="todo"><li><b>9:00 Situational writing.</b> ${swLink(d)}. Underline the purpose and the reader, then write for 20 minutes.</li><li>Fix every red dot and tick each content point you covered.</li><li><b>9:30 Plan Q${w.q}.</b> Read the question. Circle who decides and what the outcome must be.</li><li>8-minute plan in the 6 boxes, keywords only.</li><li>${link('builder','Step 6: one freeze-frame')} for your climax moment.</li><li>Tonight at 7:30, Dad marks your situational writing with you.</li></ol>${qHtml(w.q)}${GRID}`};}
  if(wd===4)return rest('Reading only','No task tonight. Bedtime reading, 15 minutes.');
  if(wd===5){if(w.sim)return rest('Rest','Well done on the mock exam. Bedtime reading only.');
-  return {kind:'task',title:`Composition: Q${w.q} ${QB[w.q].t}`,mins:50,where:'Dining table, timer on, Dad in the room',
-  body:`<ol class="todo"><li>Use Wednesday’s plan. 50 minutes on lined paper, at least 400 words.</li><li>This week’s focus: <b>${w.focus}</b>. ${w.goal}.</li><li>Dad photographs every page and sends it to Claude.</li></ol>${qHtml(w.q)}`};}
+  return {kind:'task',title:`Composition: Q${w.q} ${QB[w.q].t}`,mins:50,when:'2:30pm',whenH:14.5,where:'Dining table, timer on, Dad in the room',
+  body:`<ol class="todo"><li>8-minute plan in the six boxes first. Keywords only.</li><li>${link('comp','Step 9')}: tap <b>Start writing</b> and write straight through. 50 minutes, at least 400 words.</li><li>This week’s focus: <b>${w.focus}</b>. ${w.goal}.</li><li>Tap <b>Hand it in</b> when the timer stops, then ask Dad to send the log to Claude the same evening.</li></ol>${qHtml(w.q)}`};}
  return rest('Free day');
 }
 function nextTask(d){for(let i=1;i<10;i++){const x=addDays(d,i),p=plan(x);if(p.kind!=='rest')return {d:x,p}}return null}
 
+/* ---------- Step 8: situational writing ---------- */
+const TONE=[
+ ['I am writing to ask for permission to use the school hall.','F'],['Hey, guess what happened yesterday!','I'],
+ ['I would be grateful if you could reply by Friday.','F'],['Can’t wait to see you!','I'],
+ ['Thank you for your kind assistance.','F'],['The party’s gonna be awesome.','I'],
+ ['I look forward to hearing from you.','F'],['Btw, bring your goggles.','I'],
+ ['Please let me know if you require further information.','F'],['Miss you lots, Grandma!','I'],
+ ['I regret to inform you that the projector in our classroom is faulty.','F'],['See ya on Saturday!','I']
+];
+const OWHY={F:'Full words, no contractions, and a polite set phrase. Right for a teacher, principal or stranger.',I:'Contractions, exclamations or chatty words. Right for a friend or family member, wrong for a teacher.'};
+let oq=[],oi=0,oscore=0,oans=false;
+const osent=document.getElementById('osent'),ofb=document.getElementById('ofb');
+function oStart(){oq=shuffle(TONE);oi=0;oscore=0;document.getElementById('osc').textContent=0;document.getElementById('oqt').textContent=TONE.length;document.getElementById('obest').textContent=store.bests.tone||0;oShow()}
+function oShow(){oans=false;ofb.textContent='';ofb.className='fb';
+ if(oi>=oq.length){osent.textContent=`Finished! ${oscore} out of ${TONE.length}.`;if(oscore>(store.bests.tone||0)){store.bests.tone=oscore;save();document.getElementById('obest').textContent=oscore}return}
+ document.getElementById('oqn').textContent=oi+1;osent.textContent=oq[oi][0]}
+function oPick(k){if(oans||oi>=oq.length)return;oans=true;act('ans');const a=oq[oi][1];
+ if(k===a){oscore++;ofb.className='fb ok';ofb.textContent=`Yes, ${a==='F'?'formal':'informal'}. ${OWHY[a]}`}
+ else{ofb.className='fb no';ofb.textContent=`Not quite. It is ${a==='F'?'formal':'informal'}. ${OWHY[a]}`}
+ document.getElementById('osc').textContent=oscore}
+document.getElementById('oF').onclick=()=>oPick('F');
+document.getElementById('oI').onclick=()=>oPick('I');
+document.getElementById('onext').onclick=()=>{if(!oans&&oi<oq.length){ofb.className='fb no';ofb.textContent='Choose Formal or Informal first.';return}oi++;oShow()};
+document.getElementById('orestart').onclick=oStart;
+oStart();
+
+const SW=[
+ {title:'The lost water bottle',to:'Madam Rosnah, General Office',tone:'formal',purpose:'Report a loss and ask for help',
+  brief:'Yesterday you lost your water bottle in school. Write an email to Madam Rosnah at the General Office to report the loss and ask for her help.',
+  points:[['When you lost it (day and time)'],['Where you think you left it'],['What it looks like (colour, size, any marking)'],['Why it matters to you',1],['How the office can contact you (name and class)'],['A polite request to keep it if it is found']],
+  model:'Dear Madam Rosnah,\n\nI am writing to report that I have lost my water bottle, and I would be grateful for your help in finding it.\n\nI last had the bottle yesterday, Tuesday, at about 11 am, after my PE lesson. I believe I left it on the bench beside the school field.\n\nIt is a dark blue metal bottle with a silver cap, and it has a small shark sticker near the bottom.\n\nThe bottle means a lot to me because my grandfather gave it to me on my last birthday.\n\nIf anyone hands it in, please keep it at the General Office and inform my form teacher, Mrs Tan. I will collect it as soon as possible.\n\nThank you for your kind assistance.\n\nYours sincerely,\n[Your full name], [your class]'},
+ {title:'Invite your cousin',to:'Your cousin Wei Jie',tone:'informal',purpose:'Invite',
+  brief:'You are having a birthday swimming party. Write an email to your cousin Wei Jie to invite him.',
+  points:[['What the party is for'],['Date and time'],['Where it is'],['What to bring'],['How to get there',1],['Ask him to reply by a certain day']],
+  model:'Hi Wei Jie,\n\nGuess what? I’m turning twelve, and I’m having a swimming party to celebrate. I really hope you can come!\n\nThe party starts at 2 pm on Saturday, 21 November, at the pool in my condominium. We’ll swim first, then have pizza and cake by the pool at 4 pm.\n\nRemember to bring your swimming trunks, goggles and a towel. A cap would be useful too, because the afternoon sun is strong.\n\nThe easiest way here is to take the MRT and walk five minutes from the station. My dad can also pick you up from the station if you text him.\n\nPlease let me know by Wednesday whether you can come, so Mum can order enough pizza.\n\nSee you soon,\n[your name]'},
+ {title:'The hot study corner',to:'Mr Goh, Manager, community library',tone:'formal',purpose:'Report a problem and suggest a fix',
+  brief:'The air-conditioning in the library study corner has stopped working. Write an email to Mr Goh, the library manager, about the problem.',
+  points:[['What the problem is'],['When you first noticed it'],['How it affects the people using the corner'],['How many people are affected',1],['One suggestion to help until it is fixed'],['A polite request for action']],
+  model:'Dear Mr Goh,\n\nI am writing to inform you about a problem in the study corner on the second floor of the library, and to ask if it can be fixed.\n\nSince last Monday, the air-conditioning in the study corner has not been working. The area becomes very hot by the afternoon.\n\nMany students, including me, revise at the library during the school holidays. In the heat, it is hard to concentrate, and some of us have had to leave early. On Saturday, I counted about fifteen students who moved to the floor below.\n\nPerhaps a standing fan could be placed there until the air-conditioning is repaired.\n\nI would be grateful if you could look into this matter. Thank you for your time.\n\nYours sincerely,\n[Your full name]'},
+ {title:'Thank your swimming coach',to:'Coach Ravi',tone:'formal',purpose:'Thank',
+  brief:'Your swimming coach has helped you all year. Write an email to Coach Ravi to thank him.',
+  points:[['Say thank you and what for'],['What he did to help you'],['The result of his help'],['One moment you will always remember',1],['What you plan to do next'],['Good wishes to end']],
+  model:'Dear Coach Ravi,\n\nI am writing to thank you for coaching me this year.\n\nYou spent many Tuesday afternoons correcting my freestyle kick and reminding me to breathe every three strokes. Because of your patience, I won a bronze medal in the 50-metre freestyle at the inter-school meet last week.\n\nI will always remember the evening you stayed back after training to time my starts again and again, until I finally beat my best time.\n\nNext year, I hope to join the school swimming team and train for the 100-metre race.\n\nThank you once again for believing in me. I wish you and your family a happy holiday.\n\nYours sincerely,\n[Your full name]'},
+ {title:'Sorry I missed your match',to:'Your friend Daniel',tone:'informal',purpose:'Apologise',
+  brief:'You promised to watch your friend Daniel’s football final, but you could not go. Write an email to apologise.',
+  points:[['Say sorry clearly'],['Why you could not go'],['How you felt about missing it'],['How you will make it up to him',1],['Suggest a day to meet'],['Ask how the match went']],
+  model:'Hi Daniel,\n\nI’m really sorry I missed your football final on Saturday. I know I promised to be there.\n\nThat morning, my little sister had a high fever, and Mum needed me to stay home while she took her to the clinic. I kept checking the clock and wishing I could be at the field.\n\nTo make it up to you, I’ll treat you to bubble tea, and I’ll bring my new football so we can practise free kicks together.\n\nAre you free next Thursday after lunch? We could meet at the court near your block.\n\nBy the way, how did the match go? Did your team win?\n\nYour friend,\n[your name]'},
+ {title:'Start a chess club',to:'Mrs Lee, the Principal',tone:'formal',purpose:'Make a request',
+  brief:'You and some friends want to start a chess club in school next year. Write an email to Mrs Lee, the Principal, to ask for permission.',
+  points:[['What you are asking for'],['Why the club would help students'],['How many students want to join',1],['When and where the club would meet'],['Which teacher could look after the club',1],['Thank her and ask for a reply']],
+  model:'Dear Mrs Lee,\n\nI am writing to ask for permission to start a chess club in school next year.\n\nChess teaches us to think ahead and stay patient, which can help us in Mathematics and during examinations.\n\nTwenty-three students from Primary 4 to Primary 6 have already signed up to join.\n\nWe would like to meet every Friday from 2.30 pm to 4 pm in the library, which is usually quiet at that time.\n\nMr Ong, our Mathematics teacher, has kindly agreed to supervise the club.\n\nI hope you will consider our request. Thank you for your time, and I look forward to hearing from you.\n\nYours sincerely,\n[Your full name]'},
+ {title:'Recycling project report',to:'Mrs Tan, your form teacher',tone:'formal',purpose:'Report',
+  brief:'Your class has just finished a four-week recycling project. Write an email to Mrs Tan to report on it.',
+  points:[['What the email is about'],['What the class did'],['How much was collected'],['One problem you faced'],['How you solved it',1],['A suggestion for next term']],
+  model:'Dear Mrs Tan,\n\nI am writing to report on our class recycling project, which ended last Friday.\n\nFor four weeks, our class collected paper, cans and plastic bottles in three labelled boxes at the back of the classroom.\n\nAltogether, we collected 32 kilograms of paper, 210 cans and 145 plastic bottles.\n\nAt first, some classmates threw food waste into the boxes, which made them smelly.\n\nTo solve this, two monitors checked the boxes every recess, and we put up a poster showing what could and could not go in.\n\nNext term, I suggest that other classes join us, so we can compete to see who recycles the most.\n\nYours sincerely,\n[Your full name]'},
+ {title:'Tell Grandma about your trip',to:'Your grandmother',tone:'informal',purpose:'Share news',
+  brief:'You have just come back from a holiday in Japan. Write an email to your grandmother to tell her about it.',
+  points:[['Where you went'],['The best moment of the trip'],['A food you tried'],['Something that surprised you',1],['The gift you bought her'],['When you will visit her']],
+  model:'Dear Grandma,\n\nI’m back from Japan, and I couldn’t wait to tell you about it!\n\nThe best moment was building a snowman with Dad. It was my first time touching real snow, and my gloves were soaked in five minutes!\n\nYou would love the food. I tried hot miso ramen with corn and butter, and it warmed me up from the inside.\n\nWhat surprised me most was how quiet the trains were. Nobody talked loudly, even when the carriage was full.\n\nI bought you a soft woollen scarf, so you will stay warm in your air-conditioned living room.\n\nWe’ll visit you this Sunday afternoon, and I’ll show you all my photos.\n\nLove,\n[your name]'}
+];
+function swIndexFor(d){const n=Math.max(0,Math.floor((parse(keyOf(d))-parse('2026-11-09'))/(7*864e5)));return n%SW.length}
+const swSel=document.getElementById('swTask'),swText=document.getElementById('swText');
+SW.forEach((t,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${t.title} (${t.tone})`;swSel.appendChild(o)});
+store.sw=store.sw||{text:{},ticks:{}};
+const CONTR=/\b(\w+n[’']t|I[’']m|I[’']ve|I[’']ll|I[’']d|you[’']re|we[’']re|they[’']re|it[’']s|that[’']s|let[’']s)\b/gi;
+const SLANG=/\b(gonna|wanna|u|ur|btw|lol|ok|okay|yeah|awesome|cool|guys|hey)\b/gi;
+function swLoad(){const i=swSel.value,t=SW[i];
+ document.getElementById('swBrief').innerHTML=`<b>${esc(t.title)}</b><span>${esc(t.brief)}</span><div class="swmeta"><span class="chip">To: ${esc(t.to)}</span><span class="chip">Purpose: ${esc(t.purpose)}</span><span class="chip focus">Tone: ${t.tone}</span></div>`;
+ swText.value=store.sw.text[i]||'';
+ const ticks=store.sw.ticks[i]||[];
+ document.getElementById('swPoints').innerHTML=t.points.map((p,j)=>`<label><input type="checkbox" id="swp${j}" ${ticks[j]?'checked':''}><span>${esc(p[0])}${p[1]?'<span class="made">(make this up)</span>':''}</span></label>`).join('');
+ document.getElementById('swModelBox').hidden=true;swCheck()}
+function swCheck(){const i=swSel.value,task=SW[i],t=swText.value,formal=task.tone==='formal';
+ const words=(t.match(/[A-Za-z’']+/g)||[]).length;
+ const lines=t.split('\n').map(s=>s.trim()).filter(Boolean);
+ const first=lines[0]||'',tail=lines.slice(-3).join(' ');
+ const greet=formal?/^dear\s+(mr|mrs|ms|miss|mdm|madam|sir|dr|coach)\b/i.test(first):/^(dear|hi|hello)\b/i.test(first);
+ const sign=formal?/(yours sincerely|yours faithfully|regards)/i.test(tail):/(love|cheers|see you|take care|best wishes|your friend|your grandson|your cousin)/i.test(tail);
+ const bad=formal?[...new Set([...(t.match(CONTR)||[]),...(t.match(SLANG)||[])].map(x=>x.toLowerCase()))]:[];
+ const n=task.points.length,ticked=task.points.filter((p,j)=>{const el=document.getElementById('swp'+j);return el&&el.checked}).length;
+ const rows=[
+  [words>=120&&words<=220,`${words} words (aim for about 150)`],
+  [greet,formal?'Greeting with a title and name, like “Dear Mrs Tan,”':'Friendly greeting, like “Hi Daniel,” or “Dear Grandma,”'],
+  [sign,formal?'Formal sign-off: “Yours sincerely,” then your full name':'Friendly sign-off, like “See you soon,” or “Love,”'],
+  formal?[bad.length===0,bad.length?`Too casual for this reader: ${bad.join(', ')}. Write the full words.`:'No contractions or chatty words. Good.']
+        :[true,'Contractions and exclamations are fine for this reader.'],
+  [ticked===n,`${ticked} of ${n} content points ticked`]];
+ document.getElementById('swChecks').innerHTML=rows.map(r=>`<div class="check"><span class="dot ${r[0]?'ok':'no'}"></span>${esc(r[1])}</div>`).join('');
+ store.sw.text[i]=t;store.sw.ticks[i]=task.points.map((p,j)=>{const el=document.getElementById('swp'+j);return !!(el&&el.checked)});save()}
+swSel.onchange=swLoad;
+swText.addEventListener('input',()=>{if(swText.value.trim())act('sw');swCheck()});
+document.getElementById('swPoints').addEventListener('change',swCheck);
+document.getElementById('swModel').onclick=()=>{document.getElementById('swModelText').textContent=SW[swSel.value].model;document.getElementById('swModelBox').hidden=false};
+document.getElementById('swClear').onclick=()=>{swText.value='';document.querySelectorAll('#swPoints input').forEach(x=>x.checked=false);swCheck()};
+swSel.value=swIndexFor(new Date());swLoad();
+const swLink=d=>`${link('sw','Step 8')}: “${esc(SW[swIndexFor(d)].title)}”`;
+
 store.log=store.log||{};
+/* Activity ledger. store.log is only ever written by the Done button, so it measures
+   button taps, not work. store.act is written by the work itself. */
+store.act=store.act||{};
+const CLIMAX_SEED='I was very nervous. I looked at Allan\'s paper and copied the answers. I was scared Mr Tan would see me. "What are you doing?" he asked. I felt guilty.';
+function act(kind){
+  const d=new Date(), k=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const a=store.act[k]=store.act[k]||{ans:0};
+  if(kind==='ans')a.ans=(a.ans||0)+1; else a[kind]=true;
+  if(!a.first)a.first=d.toISOString();
+  a.last=d.toISOString();
+  save();
+}
+function worked(k){const a=store.act[k];if(!a)return false;
+  return (a.ans||0)>=5||!!a.drafts||!!a.climax||!!a.sw||!!a.comp}
+function workedWhy(k){const a=store.act[k];if(!a)return'';const w=[];
+  if((a.ans||0)>=5)w.push((a.ans)+' questions');
+  if(a.drafts)w.push('freeze-frame typed');
+  if(a.climax)w.push('climax typed');
+  if(a.sw)w.push('situational writing typed');
+  if(a.comp)w.push('COMPOSITION written in app');
+  return w.join(', ')}
+function isDone(k){return !!store.log[k]||worked(k)}
+function doneAt(k){const l=store.log[k];if(l)return new Date(l.t);
+  const a=store.act[k];return a&&a.last?new Date(a.last):null}
 let preview=null;
 function nowDate(){if(preview){const d=parse(preview);d.setHours(19,30);return d}return new Date()}
 function render(){
  const now=nowDate(),k=keyOf(now),p=plan(now),h=now.getHours()+now.getMinutes()/60,w=weekOf(now);
  document.getElementById('clock').textContent=now.toLocaleDateString('en-SG',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · '+now.toLocaleTimeString('en-SG',{hour:'numeric',minute:'2-digit'})+(preview?' (preview)':'');
- const done=!!store.log[k],nx=nextTask(now);
+ const done=isDone(k),nx=nextTask(now);
  let lead;
  if(p.kind==='rest')lead=`${p.title}. ${p.body||''}`;
  else if(done)lead='Done for today. Bedtime reading, then sleep.';
+ else if(p.when&&h<p.whenH)lead=`Today at ${p.when} (${p.mins} min)`;
+ else if(p.when&&h<p.whenH+1.5)lead=`Now. This slot started at ${p.when} (${p.mins} min)`;
+ else if(p.when)lead=`Missed the ${p.when} slot? Do it on Saturday morning instead, not tonight.`;
  else if(h<18)lead=`Tonight after dinner (${p.mins} min)`;
  else if(h<21.5)lead=`Now is a good time (${p.mins} min)`;
  else lead=p.mins>=50?'Too late to start a 50-minute task tonight. Do it Saturday morning instead, before tuition.':'It’s late. Bedtime reading only tonight. Skip this one and pick up the next task.';
@@ -609,29 +804,152 @@ function render(){
  // week box
  let wb='';
  if(w&&w.q){const fri=addDays(parse(w.start),w.sim?2:4);
-  wb=`<span class="tag">This week</span><p><b>Q${w.q}. ${QB[w.q].t}</b>. ${w.sim?'Mock exam':'Composition'} on <b>${fmt(fri)}</b>. Focus: ${esc(w.focus)}. Done means: ${esc(w.goal)}.</p>`;}
+  wb=`<span class="tag">This week</span><p><b>Q${w.q}. ${QB[w.q].t}</b>. ${w.sim?'Mock exam':'Composition'} on <b>${fmt(fri)}</b>. Focus: ${esc(w.focus)}. Done means: ${esc(w.goal)}.</p><p class="note">Situational writing this week: ${swLink(now)}.</p>`;}
  else if(w&&w.kind==='warmup')wb='<span class="tag">This week</span><p><b>Warm-up week.</b> Work through the review pack and learn ABSDT. The first composition is on <b>Fri 13 Nov</b>.</p>';
  else if(w&&w.kind==='trip')wb='<span class="tag">This week</span><p><b>Holiday.</b> No compositions. Optional 3-line trip diary during the trip.</p>';
  else if(w&&w.kind==='sw')wb='<span class="tag">This week</span><p><b>Situational writing week.</b> No composition. Short tasks only.</p>';
- const cp=parse('2026-12-30'),days=Math.ceil((cp-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/864e5);
- if(days>0)wb+=`<p class="note">${days} days to the mock exam checkpoint on Wed 30 Dec.</p>`;
  document.getElementById('weekBox').innerHTML=wb||'<p class="note">No plan for this date.</p>';
  // strip
  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());let st='',planned=0,did=0;
- for(let i=13;i>=0;i--){const d=addDays(today,-i),dk=keyOf(d),dp=plan(d),isDone=!!store.log[dk];
-  if(dp.kind!=='rest'&&i<7){planned++;if(isDone)did++}
-  st+=`<div class="day${i===0?' is-today':''}"><i class="${isDone?'done':dp.kind==='rest'?'rest':''}" title="${fmt(d)}: ${esc(dp.title)}"></i><b>${'SMTWTFS'[d.getDay()]}</b></div>`}
+ for(let i=13;i>=0;i--){const d=addDays(today,-i),dk=keyOf(d),dp=plan(d),dn=isDone(dk);
+  if(dp.kind!=='rest'&&i<7){planned++;if(dn)did++}
+  st+=`<div class="day${i===0?' is-today':''}"><i class="${dn?'done':dp.kind==='rest'?'rest':''}" title="${fmt(d)}: ${esc(dp.title)}"></i><b>${'SMTWTFS'[d.getDay()]}</b></div>`}
  document.getElementById('strip').innerHTML=st;
  document.getElementById('logSummary').textContent=`Last 7 days: ${did} of ${planned} tasks done. Green = done, dashed = rest day, grey = not done.`;
 }
-document.getElementById('copyLog').onclick=async()=>{const now=nowDate();const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());let lines=['Writing log (last 14 days)'];
- for(let i=13;i>=0;i--){const d=addDays(today,-i),dk=keyOf(d),dp=plan(d),l=store.log[dk];
-  lines.push(`${dk} ${'SunMonTueWedThuFriSat'.substr(d.getDay()*3,3)}: ${dp.title} — ${l?'DONE '+new Date(l.t).toLocaleTimeString('en-SG',{hour:'numeric',minute:'2-digit'}):dp.kind==='rest'?'rest':'not done'}`)}
- const b=store.bests||{};lines.push(`Best scores: mixed test ${b['label:Mixed test']||0}/15, tell-or-show ${b.tos||0}/20, best rewrite ${b.best||0}/8`);
+document.getElementById('copyLog').onclick=async()=>{const now=nowDate();const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());let lines=['Writing log v2 (last 14 days) — export built '+new Date().toISOString()];
+ for(let i=13;i>=0;i--){const d=addDays(today,-i),dk=keyOf(d),dp=plan(d),l=store.log[dk],why=workedWhy(dk);
+  let stat;
+  if(l&&why)stat='DONE '+new Date(l.t).toLocaleTimeString('en-SG',{hour:'numeric',minute:'2-digit'})+' (tapped; also detected: '+why+')';
+  else if(l)stat='DONE '+new Date(l.t).toLocaleTimeString('en-SG',{hour:'numeric',minute:'2-digit'})+' (tapped, no work detected in app)';
+  else if(why)stat='WORK DETECTED — '+why+(store.act[dk]&&store.act[dk].last?' — last '+new Date(store.act[dk].last).toLocaleTimeString('en-SG',{hour:'numeric',minute:'2-digit'}):'')+' (button not tapped)';
+  else if(store.act[dk])stat='opened, partial: '+((store.act[dk].ans||0))+' questions answered';
+  else stat=dp.kind==='rest'?'rest':'nothing recorded';
+  lines.push(`${dk} ${'SunMonTueWedThuFriSat'.substr(d.getDay()*3,3)}: ${dp.title} — ${stat}`)}
+ const b=store.bests||{};lines.push(`Best scores: mixed test ${b['label:Mixed test']||0}/15, tell-or-show ${b.tos||0}/20, best rewrite ${b.best||0}/8, formal or informal ${b.tone||0}/12`);
+ /* Everything below used to be stored but never exported. */
+ const dr=store.drafts||{};const dks=Object.keys(dr).filter(i=>'ABSDT'.split('').some(l=>(dr[i][l]||'').trim()));
+ lines.push('');lines.push(`FREEZE-FRAME DRAFTS: ${dks.length} of ${PROMPTS.length} prompts have writing in them`);
+ dks.forEach(i=>{lines.push(`--- "${PROMPTS[i]?PROMPTS[i].tell:('prompt '+i)}"`);
+  'ABSDT'.split('').forEach(l=>{const v=(dr[i][l]||'').trim();if(v)lines.push(`  ${l}: ${v}`)})});
+ const cx=(store.climax||'').trim();
+ lines.push('');
+ if(!cx)lines.push('CLIMAX CHECKER: empty');
+ else if(cx===CLIMAX_SEED.trim())lines.push('CLIMAX CHECKER: still the example that ships with the app — nothing of his own typed');
+ else{const wc=(cx.match(/[A-Za-z’']+/g)||[]).length;
+  lines.push(`CLIMAX CHECKER: his own text, ${wc} words`);lines.push(cx)}
+ const sw=store.sw||{text:{}};const swk=Object.keys(sw.text||{}).filter(i=>(sw.text[i]||'').trim());
+ lines.push('');lines.push(`SITUATIONAL WRITING: ${swk.length} task(s) with writing`);
+ swk.forEach(i=>{const t=sw.text[i].trim();lines.push(`--- task ${i} (${t.split(/\s+/).length} words)`);lines.push(t)});
+ const cp=store.comp||{};const cpk=Object.keys(cp).filter(q=>(cp[q].text||'').trim());
+ lines.push('');lines.push(`COMPOSITIONS WRITTEN IN THE APP: ${cpk.length}`);
+ cpk.forEach(q=>{const c=cp[q];const wc=compWords(c.text);
+  lines.push('');
+  lines.push(`=== Q${q}. ${QB[q]?QB[q].t:''} ===`);
+  lines.push(`words: ${wc} (target 400) | writing time: ${Math.round((c.secs||0)/60)} min of 50 | ${c.submitted?'handed in '+new Date(c.submitted).toLocaleString('en-SG'):'NOT handed in yet'}`);
+  if(c.paper)lines.push(`written by hand on paper; photo sent: ${c.photo?'yes':'NO'}`);
+  const pl=(c.plan||[]).map((p,i)=>p.trim()?`${COMP_PARTS[i][0]}: ${p.trim()}`:null).filter(Boolean);
+  lines.push(pl.length?'plan: '+pl.join(' | '):'plan: EMPTY (he did not plan in the app)');
+  lines.push('--- full text ---');
+  lines.push(c.text.trim());});
+ lines.push('');lines.push('RAW STORE (do not edit, paste as is):');
+ lines.push(JSON.stringify(store));
  try{await navigator.clipboard.writeText(lines.join('\n'));document.getElementById('logCopied').textContent='Copied. Paste it into the chat with Claude.'}catch(e){document.getElementById('logCopied').textContent='Copy is blocked here. Take a screenshot of this box instead.'}};
 document.getElementById('previewDate').onchange=e=>{preview=e.target.value||null;render()};
 document.getElementById('previewReset').onclick=()=>{preview=null;document.getElementById('previewDate').value='';render()};
 render();setInterval(()=>{if(!preview)render()},60000);
+
+/* ---------- Step 9: Friday composition, written in the app ---------- */
+const COMP_PARTS=[['Hook',40],['Problem',60],['Rising tension',80],['CLIMAX',120],['Outcome',80],['Reflection',50]];
+const compWords=t=>((t||'').match(/[A-Za-z\u2019'\-]+/g)||[]).length;
+store.comp=store.comp||{};
+const compQ=document.getElementById('compQ'),compText=document.getElementById('compText');
+Object.keys(QB).forEach(q=>{const o=document.createElement('option');o.value=q;o.textContent='Q'+q+'. '+QB[q].t;compQ.appendChild(o)});
+document.getElementById('compPlan').innerHTML=COMP_PARTS.map((p,i)=>
+  `<div${p[0]==='CLIMAX'?' style="border:1px solid var(--D)"':''}><b>${i+1}. ${p[0]}</b><span class="note">${p[1]} words</span>
+   <input id="cp${i}" class="txt" style="margin-top:4px;padding:6px 8px;font-size:14px" autocomplete="off" spellcheck="false"></div>`).join('');
+let compRun=false,compTick=null;
+function compRec(){const q=compQ.value;
+  const c=store.comp[q]=store.comp[q]||{plan:['','','','','',''],text:'',secs:0,submitted:null,firstTyped:null,paper:false,photo:false};
+  if(!c.plan)c.plan=['','','','','',''];
+  return c}
+const mmss=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0');
+function compStop(){const was=compRun;compRun=false;if(compTick){clearInterval(compTick);compTick=null}
+  document.getElementById('compStart').innerHTML='\u25B6 Start writing';
+  if(was)save();}
+function compPaintMeta(){const c=compRec(),s=c.secs||0,wc=compWords(c.text);
+  const t=document.getElementById('compTimer');
+  t.textContent=mmss(s)+' of 50:00';
+  t.style.borderColor=s>=3000?'var(--bad)':(compRun?'var(--S)':'var(--line)');
+  t.style.color=s>=3000?'var(--bad)':'var(--ink)';
+  const w=document.getElementById('compWc');
+  w.textContent=wc+' words';
+  w.style.borderColor=wc>=400?'var(--good)':'var(--line)';
+  w.style.color=wc>=400?'var(--good)':'var(--ink)';}
+function compChecks(){const c=compRec(),t=(c.text||'').trim(),wc=compWords(t);
+  if(!t){document.getElementById('compChecks').innerHTML='';document.getElementById('compFeelBox').hidden=true;return}
+  const feelRe=new RegExp('\\b('+FEEL.join('|')+')\\b','gi');
+  const feel=t.match(feelRe)||[];
+  const dl=(t.match(/\u201c/g)||[]).length+Math.floor((t.match(/"/g)||[]).length/2);
+  const paras=t.split(/\n\s*\n/).filter(x=>x.trim()).length;
+  const mins=Math.round((c.secs||0)/60);
+  const rows=[
+    [wc>=400,`${wc} words (at least 400)`],
+    [paras>=5,`${paras} paragraph${paras===1?'':'s'} (the plan has 6 parts)`],
+    [mins>0&&mins<=50,`${mins} min of writing time${mins>50?' \u2014 over the exam limit':mins===0?' \u2014 timer never started':''}`],
+    [feel.length<=2,feel.length?`${feel.length} feeling word${feel.length>1?'s':''} named: ${[...new Set(feel.map(f=>f.toLowerCase()))].join(', ')}. Show them with a B sentence instead.`:'No feeling words named anywhere. Strong.'],
+    [dl>=1,`${dl} line${dl===1?'':'s'} of dialogue`]];
+  document.getElementById('compChecks').innerHTML=rows.map(r=>`<div class="check"><span class="dot ${r[0]?'ok':'no'}"></span>${esc(r[1])}</div>`).join('');
+  const fb=document.getElementById('compFeelBox');
+  if(feel.length){fb.hidden=false;document.getElementById('compFeel').innerHTML=esc(t).replace(feelRe,'<mark>$1</mark>')}
+  else fb.hidden=true;}
+function compLoad(){const c=compRec();
+  document.getElementById('compBrief').innerHTML=qHtml(compQ.value);
+  COMP_PARTS.forEach((p,i)=>{document.getElementById('cp'+i).value=c.plan[i]||''});
+  compText.value=c.text||'';
+  document.getElementById('compPaper').checked=!!c.paper;
+  document.getElementById('compPhoto').checked=!!c.photo;
+  const sub=!!c.submitted;
+  compText.readOnly=sub;
+  compText.style.opacity=sub?'.75':'1';
+  document.getElementById('compStatus').textContent=sub
+    ?'Handed in '+new Date(c.submitted).toLocaleString('en-SG')+'. Ask Dad to send the log.'
+    :(c.text||'').trim()?'Draft saved on this tablet.':'';
+  compStop();compPaintMeta();compChecks();}
+function compSave(){const c=compRec();
+  COMP_PARTS.forEach((p,i)=>{c.plan[i]=document.getElementById('cp'+i).value});
+  c.text=compText.value;
+  if(c.text.trim()&&!c.firstTyped)c.firstTyped=new Date().toISOString();
+  save();}
+document.getElementById('compStart').onclick=()=>{
+  const c=compRec();
+  if(c.submitted){document.getElementById('compStatus').textContent='This one is handed in. Tap Reopen first.';return}
+  if(compRun){compStop();compPaintMeta();return}
+  compRun=true;document.getElementById('compStart').innerHTML='\u275A\u275A Pause';
+  compText.focus();
+  compTick=setInterval(()=>{const cc=compRec();cc.secs=(cc.secs||0)+1;
+    if(cc.secs%5===0)save();
+    compPaintMeta();
+    if(cc.secs===3000){compStop();document.getElementById('compStatus').textContent='Fifty minutes. In the exam you would stop here \u2014 finish your sentence and hand it in.'}},1000);
+  compPaintMeta();};
+compText.addEventListener('input',()=>{if(compText.value.trim())act('comp');compSave();compPaintMeta()});
+COMP_PARTS.forEach((p,i)=>document.getElementById('cp'+i).addEventListener('input',()=>{act('comp');compSave()}));
+document.getElementById('compSubmit').onclick=()=>{const c=compRec();
+  if(!(c.text||'').trim()){document.getElementById('compStatus').textContent='Nothing written yet.';return}
+  compStop();c.submitted=new Date().toISOString();compSave();save();compLoad();compChecks();};
+document.getElementById('compReopen').onclick=()=>{const c=compRec();c.submitted=null;save();compLoad()};
+document.getElementById('compPaper').onchange=e=>{compRec().paper=e.target.checked;act('comp');save()};
+document.getElementById('compPhoto').onchange=e=>{compRec().photo=e.target.checked;act('comp');save()};
+compQ.onchange=compLoad;
+/* Deliberately NO pagehide/visibilitychange flush. save() writes the whole in-memory store,
+   so a blind write on the way out can overwrite newer data (another tab, a restored session)
+   with whatever this page happened to be holding. Every keystroke in the composition already
+   calls compSave()+save(), and the clock is persisted every 5s and on pause, so the most a
+   hard exit can cost is a few seconds of timer. Not worth a stale-overwrite hazard. */
+(function(){const w=weekOf(nowDate());compQ.value=(w&&w.q)?String(w.q):'1';compLoad()})();
+
 </script>
 </body>
 </html>
+
+</body></html>
